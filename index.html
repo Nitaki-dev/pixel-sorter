@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Pixel Sorter</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Cache-control" content="public">
+    <meta name="description" content="Pixel sorter">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main>
+        <div class="main-left">
+            <h1>Nitaki's pixel sorter</h1>
+            <h3 id="mobile-alert">this does not work properly on mobile</h3>
+            <br>
+            <input aria-label="Load image" type="file" id="inputImage" accept="image/*" onchange="loadImage(event)">
+            <br>
+            <div id="dropdowns-container">
+                <select aria-label="Sorting direction" id="sortDirection">
+                    <option value="horizontal">Horizontal</option>
+                    <option value="vertical">Vertical</option>
+                </select>
+                <select aria-label="Sorthing method" id="sortColor">
+                    <option value="RGB">RGB</option>
+                    <option value="red">Red</option>
+                    <option value="green">Green</option>
+                    <option value="blue">Blue</option>
+                    <option value="saturation">Saturation</option>
+                    <option value="luminence">Luminence</option>
+                    <option value="hue">Hue</option>
+                </select>
+            </div>
+            <br>
+            <div>
+                <input aria-label="Reverse Sort" type="checkbox" id="reverseSort" value="true"> Reverse Sort <!-- reverse the sort direction -->
+                <input aria-label="Use mask" type="checkbox" id="maskSort" value="true"> Use Mask <!-- create a black and white mast -->
+            </div>
+            <br>
+            <select aria-label="Effects" id="selectedEffects">
+                <option value="none">None</option>
+                <option value="dithering">Dithering</option>
+                <option value="quantization">Color Quantization</option>
+            </select>
+            <br>
+            <button id="sort-btn" type="submit" onclick="sortPixels()">Sort Pixels</button>
+            <br>
+            <button id="revert-btn" type="submit" onclick="revertChanges()">Revert changes</button>
+            <br>
+            <p id="logs"></p>
+        </div>
+        <div class="main-right" id="image-holder"></div>
+    </main>
+    <script src="p5.js"></script>
+    <script src="pixel_sorter.js"></script>
+</body>
+</html>

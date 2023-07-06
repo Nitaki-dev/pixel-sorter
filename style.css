@@ -1,0 +1,88 @@
+* {
+    margin: 0;
+    padding: 0;
+    color-scheme: dark;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+main {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.main-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100vh;
+    width: 25%;
+    min-width: 300px;
+    padding: 1rem;
+    outline: 1px solid #313131;
+    overflow-x: hidden;
+}
+
+.main-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 75%;
+    margin-left: 1rem;
+}
+
+button {padding: 0.5rem;}
+button:hover {cursor: pointer;}
+select {padding: 0.5rem;}
+select:hover {cursor: pointer;}
+input {padding: 0.5rem;}
+input:hover {cursor: pointer;}
+
+input[type=checkbox] {
+    margin-left: 0.3rem;
+    margin-right: 0.3rem;
+    transform: scale(1.3);
+}
+
+#dropdowns-container {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#dropdowns-container > * {width: 48%;}
+
+#logs {
+    width: 100%;
+    height: 4rem;
+    outline: 1px solid #313131;
+    border-radius: 0.3rem;
+}
+
+@media screen and (max-width: 640px) {
+    main {
+        align-items: center;
+        flex-direction: column;
+    }
+    .main-left {
+        width: 100%;
+        height: 56vh;
+        margin: 0;
+    }
+    .main-right {
+        width: 100%;
+        height: 44vh; /* fix here */
+        overflow: auto; /* To add scroll if image is larger than container */
+        margin: 0;
+        padding: 0;
+    }
+}
+#mobile-alert {display: none; text-align: center; margin-top: 1rem; color: red}
+
+@media (pointer:none), (pointer:coarse) {
+    #mobile-alert {display: block;}
+}
