@@ -35,6 +35,13 @@
             <div>
                 <input aria-label="Reverse Sort" type="checkbox" id="reverseSort" value="true"> Reverse Sort <!-- reverse the sort direction -->
                 <input aria-label="Use mask" type="checkbox" id="maskSort" value="true"> Use Mask <!-- create a black and white mast -->
+                <input aria-label="Show" type="checkbox" id="displayMask" value="true"> Display
+            </div>
+            <div>
+                <input type="number" id="lowThreshold" min="0" max="1" step="0.01" value="0.30">
+                <label for="lowThreshold">Low threshold</label>
+                <input type="number" id="highThreshold" min="0" max="1" step="0.01" value="0.70">
+                <label for="highThreshold">High threshold</label>
             </div>
             <br>
             <select aria-label="Effects" id="selectedEffects">
@@ -48,10 +55,12 @@
             <button id="revert-btn" type="submit" onclick="revertChanges()">Revert changes</button>
             <br>
             <p id="logs"></p>
+            <br>
+            <button id="saveButton">Save Image</button>
         </div>
         <div class="main-right" id="image-holder"></div>
     </main>
-    <script src="p5.js"></script>
+    <script src="p5.js"></script>    
     <script src="pixel_sorter.js"></script>
 </body>
 </html>
