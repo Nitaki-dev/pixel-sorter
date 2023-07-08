@@ -3,10 +3,7 @@ let p5Instance = null;
 
 let visualizeMask = false;
 
-function log(message) {
-    var log = document.getElementById('logs');
-    log.innerHTML = message;
-}
+let randomMaskOffset = 15;
 
 function loadImage(event) {
     let file = event.target.files[0];
@@ -48,7 +45,7 @@ function loadImage(event) {
             };
         });
     } else {
-        console.log('Not an image file!');
+        log('Please upload an image file.');
     }
 }
 
@@ -59,50 +56,25 @@ function countUniqueColors(pixels) {
         let r = pixels[i];
         let g = pixels[i+1];
         let b = pixels[i+2];
-        
-        // convert the r, g, b values into a single string
         let colorStr = r + ',' + g + ',' + b;
         
-        // add the color to the Set
         uniqueColors.add(colorStr);
     }
     
-    // return the number of unique colors
     return uniqueColors.size;
-}
-
-function RGBToHSL(r, g, b) {
-    r /= 255, g /= 255, b /= 255;
-    let max = Math.max(r, g, b), min = Math.min(r, g, b);
-    let h, s, l = (max + min) / 2;
-
-    if(max === min) {
-        h = s = 0;
-    } else {
-        let d = max - min;
-        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-        switch(max){
-            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-            case g: h = (b - r) / d + 2; break;
-            case b: h = (r - g) / d + 4; break;
-        }
-        h /= 6;
-    }
-
-    return [h, s, l];
 }
 
 function maskFunction(pixel) {
     let lowThreshold = parseFloat(document.getElementById('lowThreshold').value);
     let highThreshold = parseFloat(document.getElementById('highThreshold').value);
-
+    
     let pixelValue = 0.2989*pixel.r + 0.5870*pixel.g + 0.1140*pixel.b;
-    let normalizedValue = pixelValue / 255; // Normalize to range 0.0 - 1.0
+    let normalizedValue = pixelValue / 255;
 
     if (normalizedValue > lowThreshold && normalizedValue < highThreshold) {
-        return true; // Pixel is within thresholds
+        return true;
     } else {
-        return false; // Pixel is outside thresholds
+        return false;
     }
 }
 
@@ -131,54 +103,16 @@ function maskPixels() {
     return {maskedPixels, mask};
 }
 
-function quantizeColor(c, quanta) {
-    return Math.round(c / quanta) * quanta;
-}
-
-function applyQuantization(pixel) {
-    pixel.r = quantizeColor(pixel.r, 32);
-    pixel.g = quantizeColor(pixel.g, 32);
-    pixel.b = quantizeColor(pixel.b, 32);
-}
-
-function findClosestPaletteColor(oldPixel) {
-    return {
-        r: quantizeColor(oldPixel.r, 32),
-        g: quantizeColor(oldPixel.g, 32),
-        b: quantizeColor(oldPixel.b, 32)
-    };
-}
+function quantizeColor(c, quanta) {return Math.round(c / quanta) * quanta;}
+function applyQuantization(pixel) {pixel.r = quantizeColor(pixel.r, 32); pixel.g = quantizeColor(pixel.g, 32); pixel.b = quantizeColor(pixel.b, 32);}
+function findClosestPaletteColor(oldPixel) {return {r: quantizeColor(oldPixel.r, 32), g: quantizeColor(oldPixel.g, 32), b: quantizeColor(oldPixel.b, 32)};}
 
 function applyDithering(pixels, x, y, quantError) {
     let index;
-
-    if (x + 1 < p5Instance.width) {
-        index = 4 * ((y) * p5Instance.width + (x + 1));
-        pixels[index]     += quantError.r * 7/16;
-        pixels[index + 1] += quantError.g * 7/16;
-        pixels[index + 2] += quantError.b * 7/16;
-    }
-
-    if (x - 1 >= 0 && y + 1 < p5Instance.height) {
-        index = 4 * ((y + 1) * p5Instance.width + (x - 1));
-        pixels[index]     += quantError.r * 3/16;
-        pixels[index + 1] += quantError.g * 3/16;
-        pixels[index + 2] += quantError.b * 3/16;
-    }
-
-    if (y + 1 < p5Instance.height) {
-        index = 4 * ((y + 1) * p5Instance.width + x);
-        pixels[index]     += quantError.r * 5/16;
-        pixels[index + 1] += quantError.g * 5/16;
-        pixels[index + 2] += quantError.b * 5/16;
-    }
-
-    if (x + 1 < p5Instance.width && y + 1 < p5Instance.height) {
-        index = 4 * ((y + 1) * p5Instance.width + (x + 1));
-        pixels[index]     += quantError.r * 1/16;
-        pixels[index + 1] += quantError.g * 1/16;
-        pixels[index + 2] += quantError.b * 1/16;
-    }
+    if (x + 1 < p5Instance.width) {index = 4 * ((y) * p5Instance.width + (x + 1)); pixels[index] += quantError.r * 7/16; pixels[index + 1] += quantError.g * 7/16; pixels[index + 2] += quantError.b * 7/16;}
+    if (x - 1 >= 0 && y + 1 < p5Instance.height) {index = 4 * ((y + 1) * p5Instance.width + (x - 1)); pixels[index] += quantError.r * 3/16; pixels[index + 1] += quantError.g * 3/16; pixels[index + 2] += quantError.b * 3/16;}
+    if (y + 1 < p5Instance.height) {index = 4 * ((y + 1) * p5Instance.width + x); pixels[index] += quantError.r * 5/16; pixels[index + 1] += quantError.g * 5/16; pixels[index + 2] += quantError.b * 5/16;}
+    if (x + 1 < p5Instance.width && y + 1 < p5Instance.height) {index = 4 * ((y + 1) * p5Instance.width + (x + 1)); pixels[index] += quantError.r * 1/16; pixels[index + 1] += quantError.g * 1/16; pixels[index + 2] += quantError.b * 1/16;}
 }
 
 async function sortPixels() {
@@ -190,14 +124,14 @@ async function sortPixels() {
         let maskSort = document.getElementById('maskSort').checked;
         let selectedEffects = document.getElementById('selectedEffects').value;
         visualizeMask = document.getElementById('displayMask').checked;
+        let ramdomMaskOffset = document.getElementById('ramdomMaskOffset').checked;
 
-        log(sortColor + ", " + sortDirection + ", R:" + reverseSort + ", M:" + maskSort + ", E:" + selectedEffects);
+        console.log(sortColor + ", " + sortDirection + ", R:" + reverseSort + ", M:" + maskSort + ", E:" + selectedEffects);
 
         p5Instance.loadPixels();
 
-        log("Amount of unique colors: " + countUniqueColors(p5Instance.pixels));
-
         if (selectedEffects === 'dithering') {
+            log(countUniqueColors(p5Instance.pixels) + ' unique colors in original image');
             for (let y = 0; y < p5Instance.height; y++) {
                 for (let x = 0; x < p5Instance.width; x++) {
                     let i = 4 * (y * p5Instance.width + x);
@@ -216,8 +150,9 @@ async function sortPixels() {
                     applyDithering(p5Instance.pixels, x, y, quantError);
                 }
             }
-            log("Amount of unique colors after dithering: " + countUniqueColors(p5Instance.pixels));
+            stackLogs(countUniqueColors(p5Instance.pixels) + " unique colors after dithering");
         } else if (selectedEffects === 'quantization') {
+            log(countUniqueColors(p5Instance.pixels) + ' unique colors in original image');
             for (let y = 0; y < p5Instance.height; y++) {
                 for (let x = 0; x < p5Instance.width; x++) {
                     let i = 4 * (y * p5Instance.width + x);
@@ -230,9 +165,7 @@ async function sortPixels() {
                     p5Instance.pixels[i + 2] = pixel.b;
                 }
             }
-            log("Amount of unique colors after quantization: " + countUniqueColors(p5Instance.pixels));
-        } else {
-            console.log("No effects selected");
+            stackLogs(countUniqueColors(p5Instance.pixels) + " unique colors after quantization");
         }
 
         let mask = [];
@@ -295,7 +228,7 @@ async function sortPixels() {
                 };
                 break;
             default:
-                log("Invalid sort color: " + sortColor);
+                log("Invalid sorting mode: " + sortColor);
                 return;
         }
 
@@ -310,6 +243,10 @@ async function sortPixels() {
                         span.sort(sortFunction);
                         if (reverseSort) {
                             span.reverse();
+                        }
+                        if (ramdomMaskOffset) {
+                            let offset = Math.floor(Math.random() * randomMaskOffset);
+                            span = span.slice(offset).concat(span.slice(0, offset));
                         }
                         return span;
                     });
@@ -339,6 +276,10 @@ async function sortPixels() {
                         if (reverseSort) {
                             span.reverse();
                         }
+                        if (ramdomMaskOffset) {
+                            let offset = Math.floor(Math.random() * randomMaskOffset);
+                            span = span.slice(offset).concat(span.slice(0, offset));
+                        }
                         return span;
                     });
             
@@ -356,7 +297,7 @@ async function sortPixels() {
                 }
             }
         } else {
-            log("Invalid sort direction: " + sortDirection);
+            log("Invalid sorting direction: " + sortDirection);
             return;
         }
 
@@ -410,11 +351,6 @@ function flattenSpans(sortedSpans, unmaskedPixels, maskRow) {
             sortedRow.push(unmaskedPixels[unmaskedIndex++]);
         }
     }
-
-    // if(sortedRow.length !== maskRow.length) {
-    //     console.log(`Mismatch between sortedRow length (${sortedRow.length}) and maskRow length (${maskRow.length})`);
-    // }
-
     return sortedRow;
 }
 
@@ -427,9 +363,9 @@ function revertChanges() {
         }
         p5Instance.updatePixels();
         p5Instance.redraw();
-        console.log("Image reverted");
+        log("Image returned to original state");
     } else {
-        console.log("No image loaded");
+        log("No image loaded");
     }
 }
 
@@ -448,7 +384,7 @@ function getRow(y) {
 
 function setRow(y, row) {
     if(row.length !== p5Instance.width) {
-        console.log(`Mismatch between row length (${row.length}) and image width (${p5Instance.width})`);
+        console.log(`Mismatch between row length ${row.length} and image width ${p5Instance.width}`);
         return;
     }
     for (let x = 0; x < p5Instance.width; x++) {
@@ -480,7 +416,7 @@ function getColumn(x) {
 
 function setColumn(x, column) {
     if(column.length !== p5Instance.height) {
-        console.log(`AAA-Mismatch between column length (${column.length}) and image height (${p5Instance.height})`);
+        console.log(`Mismatch between column length ${column.length} and image height ${p5Instance.height}`);
         return;
     }
     for (let y = 0; y < p5Instance.height; y++) {
@@ -491,10 +427,26 @@ function setColumn(x, column) {
     }
 }
 
-document.getElementById('saveButton').addEventListener('click', function() {
+document.getElementById('image-export-button').addEventListener('click', function() {
     if (!img) {
         log("No image loaded");
     } else {
-    p5Instance.saveCanvas('sorted-image', 'png');
+        p5Instance.saveCanvas('sorted-image', 'png');
     }
 });
+
+// async function exportGIF() {
+//     if (!img) {
+//         log("No image loaded");
+//     } else {
+//         let currentFrame = 0;
+//         let maxFrames = parseInt(document.getElementById('gifFrames').value);
+
+//         for (currentFrame; currentFrame < maxFrames; currentFrame++) {
+//             log(`Exporting GIF... <br> Frame ${currentFrame} of ${maxFrames}`);
+//             console.log(`Exporting GIF... <br> Frame ${currentFrame} of ${maxFrames}`);
+//             sortPixels();
+//             await sortPixels();
+//         }
+//     }
+// }
