@@ -40,6 +40,7 @@
             </div>
 
             <div id="maskOptions">
+                <input aria-label="Inverse mask" type="checkbox" id="invertMask" value="true"> Invert Mask <!-- inverse the mask -->
                 <input aria-label="Display mask" type="checkbox" id="displayMask" value="true"> Display mask <!-- display the mask -->
                 <input aria-label="Random mask offset" type="checkbox" id="ramdomMaskOffset" value="true"> Random offset <!-- randomize the mask offset -->
                 <br>
@@ -58,7 +59,7 @@
                 <option value="dithering">Dithering</option>
                 <option value="quantization">Color Quantization</option>
             </select>
-
+        
             <div id="sort-div">
                 <button id="sort-btn" type="submit" onclick="sortPixels()">Sort Pixels</button>
                 <button id="revert-btn" type="submit" onclick="revertChanges()">

@@ -72,11 +72,20 @@ function countUniqueColors(pixels) {
 function maskFunction(pixel, lowThreshold, highThreshold) {
     let pixelValue = 0.2989*pixel.r + 0.5870*pixel.g + 0.1140*pixel.b;
     let normalizedValue = pixelValue / 255;
+    let invertMask = document.getElementById('invertMask').checked;
 
-    if (normalizedValue > lowThreshold && normalizedValue < highThreshold) {
-        return true;
+    if (invertMask) {
+        if (normalizedValue > lowThreshold && normalizedValue < highThreshold) {
+            return false;
+        } else {
+            return true;
+        }
     } else {
-        return false;
+        if (normalizedValue > lowThreshold && normalizedValue < highThreshold) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
 
@@ -129,7 +138,6 @@ let maskSort = document.getElementById('maskSort').checked;
 let selectedEffects = document.getElementById('selectedEffects').value;
 visualizeMask = document.getElementById('displayMask').checked;
 let ramdomMaskOffset = document.getElementById('ramdomMaskOffset').checked;
-
 
 async function sortPixels() {
     if (img) {
