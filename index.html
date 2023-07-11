@@ -11,7 +11,7 @@
 <body>
     <main>
         <div class="main-left">
-            <h1>Nitaki's pixel sorter</h1>
+            <h1 id="big-text">Nitaki's pixel sorter</h1>
             <h3 id="mobile-alert">this does not work properly on mobile</h3>
             <br>
 
@@ -40,26 +40,49 @@
             </div>
 
             <div id="maskOptions">
-                <input aria-label="Inverse mask" type="checkbox" id="invertMask" value="true"> Invert Mask <!-- inverse the mask -->
-                <input aria-label="Display mask" type="checkbox" id="displayMask" value="true"> Display mask <!-- display the mask -->
-                <input aria-label="Random mask offset" type="checkbox" id="ramdomMaskOffset" value="true"> Random offset <!-- randomize the mask offset -->
-                <br>
-                <input aria-label="Mask offset" type="number" id="randomMaskOffset" min="0" max="30" step="1" value="15"> <!-- mask offset -->
-                <label for="randomMaskOffset">Randomly offset the mask's spans</label>
+                <div><input aria-label="Inverse mask" type="checkbox" id="invertMask" value="true"> Invert Mask</div> <!-- inverse the mask -->
+                <div><input aria-label="Display mask" type="checkbox" id="displayMask" value="true"> Display mask</div> <!-- display the mask -->
+                <div><input aria-label="Random mask offset" type="checkbox" id="ramdomMaskOffset" value="true"> Random offset</div> <!-- randomize the mask offset -->
+                <div>
+                    <input aria-label="Mask offset" type="number" id="randomMaskOffset" min="0" max="30" step="1" value="15"> <!-- mask offset -->
+                    <label for="randomMaskOffset">Randomly offset the mask's spans</label>
+                </div>
                 <div id="threshold">
-                    <input type="number" id="lowThreshold" min="0" max="1" step="0.01" value="0.28">
-                    <label for="lowThreshold">Low threshold</label>
-                    <input type="number" id="highThreshold" min="0" max="1" step="0.01" value="0.81">
-                    <label for="highThreshold">High threshold</label>
+                    <div>
+                        <input type="number" id="lowThreshold" min="0" max="1" step="0.01" value="0.28">
+                        <label for="lowThreshold" style="margin-right: 0.3rem;">Low threshold</label>
+                    </div>
+                    <div>
+                        <input type="number" id="highThreshold" min="0" max="1" step="0.01" value="0.81">
+                        <label for="highThreshold">High threshold</label>
+                    </div>
                 </div>
             </div>
 
-            <select aria-label="Effects" id="selectedEffects">
-                <option value="none">None</option>
-                <option value="dithering">Dithering</option>
-                <option value="quantization">Color Quantization</option>
-            </select>
-        
+            <div id="effect-options">
+                <input aria-label="Use effects" type="checkbox" id="useEffects" value="true"> Use Effects <!-- create a black and white mast -->
+                <div id="effect-list">
+                    <div>
+                        <div><input aria-label="dithering" type="checkbox" id="effect_dithering" value="true"> Dithering</div>
+                        <div><input aria-label="quantization" type="checkbox" id="effect_color_quant" value="true"> Color Quantization</div>
+                        <div><input aria-label="posterize" type="checkbox" id="effect_posterize" value="true"> Posterize</div>
+                        <div><input aria-label="blur" type="checkbox" id="effect_pixelate" value="true"> Pixelate</div>
+                        <div><input aria-label="sharpen" type="checkbox" id="effect_sharpen" value="true"> Sharpen</div>
+                        <div><input aria-label="emboss" type="checkbox" id="effect_emboss" value="true"> Emboss</div>
+                        <div><input aria-label="sepia" type="checkbox" id="effect_sepia" value="true"> Sepia</div>
+
+                    </div>
+                    <div>
+                        <div><input aria-label="invert" type="checkbox" id="effect_invert" value="true"> Invert</div>
+                        <div><input aria-label="edge detection" type="checkbox" id="effect_edge_detection" value="true"> Edge Detection</div>
+                        <div><input aria-label="grayscale" type="checkbox" id="effect_grayscale" value="true"> Grayscale</div>
+                        <div><input aria-label="sobel" type="checkbox" id="effect_sobel" value="true"> Sobel</div>
+                        <div><input aria-label="chromatic aberration" type="checkbox" id="effect_chromatic_aberration" value="true"> Chromatic Aberration</div>
+                        <div><input aria-label="film grain" type="checkbox" id="effect_film_grain" value="true"> Film grain</div>
+                        <div><input aria-label="vignette" type="checkbox" id="effect_vignette" value="true"> Vignette</div>
+                    </div>
+                </div>
+            </div>
             <div id="sort-div">
                 <button id="sort-btn" type="submit" onclick="sortPixels()">Sort Pixels</button>
                 <button id="revert-btn" type="submit" onclick="revertChanges()">
@@ -90,6 +113,7 @@
     </main>
     <script src="p5.js"></script>
     <script src="gif.js"></script>
+    <script src="effects.js"></script>
     <script src="nitaki-lib.js"></script>
     <script src="pixel_sorter.js"></script>
 </body>
