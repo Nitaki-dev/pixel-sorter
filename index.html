@@ -13,9 +13,11 @@
         <div class="main-left">
             <h1 id="big-text">Nitaki's pixel sorter</h1>
             <h3 id="mobile-alert">this does not work properly on mobile</h3>
+            
             <br>
 
-            <input aria-label="Load image" type="file" id="inputImage" accept="image/*" onchange="loadImage(event)">
+            <input style="display: none;" aria-label="Load image" type="file" id="inputImage" accept="image/*" onchange="loadImage(event)">
+            <label for="inputImage" class="custom-file-upload">Upload an image</label>
             
             <div id="dropdowns-container">
                 <select aria-label="Sorting direction" id="sortDirection">
@@ -110,10 +112,10 @@
             <div id="image-holder"></div>
         </div>
     </main>
-    <script src="p5.js"></script>
-    <script src="gif.js"></script>
+    <script src="libs/p5.js"></script>
+    <script src="libs/gif.js"></script>
     <script src="effects.js"></script>
-    <script src="nitaki-lib.js"></script>
+    <script src="libs/nitaki-lib.js"></script>
     <script src="pixel_sorter.js"></script>
 </body>
 </html>
