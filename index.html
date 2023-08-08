@@ -20,11 +20,9 @@
         <div class="main-left">
             <h1 id="big-text">Nitaki's pixel sorter</h1>
             <h3 id="mobile-alert">this does not work properly on mobile</h3>
-            
             <br>
-
-            <input style="display: none;" aria-label="Load image" type="file" id="inputImage" accept="image/*" onchange="loadImage(event)">
-            <label for="inputImage" class="custom-file-upload">Upload an image</label>
+            <input style="display: none;" aria-label="Load image" type="file" id="inputImage" accept="image/*" onchange="loadImage(event)" tabindex="0">
+            <label for="inputImage" class="custom-file-upload" tabindex="1">Upload an image</label>
             
             <div id="dropdowns-container">
                 <select aria-label="Sorting direction" id="sortDirection">
@@ -70,16 +68,17 @@
 
             <div id="effect-options">
                 <input aria-label="Use effects" type="checkbox" id="useEffects" value="true"> Use Effects <!-- create a black and white mask -->
-                <div id="effect-list">
 
-                </div>
+                <div id="effect-list"></div>
+
                 <input aria-label="Use color correction" type="checkbox" id="use_color_correction" value="true"> Use Color Correction <!-- create a black and white mask -->
                 <div id="color_correction">
-                    <div class="color_correction_option"><input aria-label="contrast" type="range" id="color_correction_contrast" min="0" max="2" step="0.01" value="1.2"><label>Contrast</label></div>
-                    <div class="color_correction_option"><input aria-label="brightness" type="range" id="color_correction_brightness" min="-255" max="255" step="1" value="0"><label>Brightness</label></div>
-                    <div class="color_correction_option"><input aria-label="saturation" type="range" id="color_correction_saturation" min="0" max="2" step="0.01" value="1.5"><label>Saturation</label></div>
-                    <div class="color_correction_option"><input aria-label="gamma" type="range" id="color_correction_gamma" min="0.8" max="2.2" step="0.01" value="0.8"><label>Gamma</label></div>
+                    <div class="color_correction_option"><input aria-label="contrast" type="range" id="color_correction_contrast" min="1" max="3" step="0.01" value="1.2">    <p id="color_correction_contrast_value" class="cc_value"></p><label>Contrast</label></div>
+                    <div class="color_correction_option"><input aria-label="brightness" type="range" id="color_correction_brightness" min="-255" max="255" step="1" value="0"><p id="color_correction_brightness_value" class="cc_value"></p><label>Brightness</label></div>
+                    <div class="color_correction_option"><input aria-label="saturation" type="range" id="color_correction_saturation" min="0" max="2" step="0.01" value="1.5"><p id="color_correction_saturation_value" class="cc_value"></p><label>Saturation</label></div>
+                    <div class="color_correction_option"><input aria-label="gamma" type="range" id="color_correction_gamma" min="0.8" max="2.2" step="0.01" value="0.8">      <p id="color_correction_gamma_value" class="cc_value"></p><label>Gamma</label></div>
                 </div>
+                <div id="effect-settings-container" style="width: 0; height: 0;"></div>
             </div>
             <div id="sort-div">
                 <button id="sort-btn" type="submit" onclick="sortPixels()">Sort Pixels</button>
@@ -112,6 +111,7 @@
     <script src="libs/p5.js"></script>
     <script src="libs/gif.js"></script>
     <script src="libs/nitaki-lib.js"></script>
+    <script src="libs/nitaki-js-module-manager.js"></script>
     <script src="effects.js"></script>
     <script src="pixel_sorter.js"></script>
 </body>
