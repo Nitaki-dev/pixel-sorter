@@ -1,5 +1,6 @@
 # Pixel sorting made easy
 Insipired by [Acerola](https://github.com/GarrettGunnell/Pixel-Sorting)
+<br>
 You can try this right now on [my website](https://nitaki-dev.github.io/pixel-sorter/)!
 
 ![image 1](imgs/sorted-1.gif)
