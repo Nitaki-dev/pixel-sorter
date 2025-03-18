@@ -325,7 +325,6 @@ async function sortPixels() {
         }
         if (useEffects.checked) if (effect_pixelate.checked) {
             effect_pixelate_function(Number(pixelate_settings_pixel_size.value));
-            log(Number(pixelate_settings_pixel_size.value));
         }
 
         p5Instance.updatePixels();
