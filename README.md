@@ -16,7 +16,7 @@ Pixel Sorting is a digital art effect where we apply a sorting algorithm to the 
 
 # FAQ:
 
-> `What is the difference between the sorting algorithms ?`<br>
+> What is the difference between the sorting algorithms ?<br>
 
 - **RGB** : Sorts the pixels based on their RGB values
 - **Red** : Sorts the pixels based on their Red values
@@ -28,19 +28,19 @@ Pixel Sorting is a digital art effect where we apply a sorting algorithm to the 
 
 <br>
 
-> `How does the mask work and the threshold work ?`<br>
+> How does the mask work and the threshold work ?<br>
 
 The mask is a black and white image that will be used to determine which pixels will be sorted and which won't. The threshold is a value between 0 and 255 that will be used to determine which pixels will be sorted and which won't. The pixels that have a value that falles inside both thresholds will be sorted and the ones that don't won't be sorted.
 
 <br>
 
-> `What is Color Quantization ?`<br>
+> What is Color Quantization ? <br>
 
 Color quantization is the process of reducing the number of colors used in an image while trying to maintain the visual appearance of the original image (use a smaller colorpalette)
 
 <br>
 
-> `What is Dithering ?`<br>
+> What is Dithering ?<br>
 
 Dithering is an intentionally applied form of noise used to randomize quantization error, preventing large-scale patterns such as color banding in images (smoothen the color transitions)
 
