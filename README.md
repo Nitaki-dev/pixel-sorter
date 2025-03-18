@@ -31,6 +31,8 @@ Pixel Sorting is a digital art effect where we apply a sorting algorithm to the 
 - `Animate with random offset` : The offset will be randomly generated for each frame
 - `Animate with threshold` : The threshold will slowly be incremented until it reaches the value set by the user
 
+---
+
 #### How does the mask work and the threshold work ?<br>
 
 The mask is a black and white image that will be used to determine which pixels will be sorted and which won't. The threshold is a value between 0 and 255 that will be used to determine which pixels will be sorted and which won't. The pixels that have a value that falles inside both thresholds will be sorted and the ones that don't won't be sorted.
