@@ -1,4 +1,5 @@
-# Pixel sorting made easy
+# Pixel sorting made easy 
+[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FNitaki-dev%2Fpixel-sorter&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=views&edge_flat=false)](https://hits.seeyoufarm.com)
 Insipired by [Acerola](https://github.com/GarrettGunnell/Pixel-Sorting)
 <br>
 You can try this right now on [my website](https://nitaki-dev.github.io/pixel-sorter/)!
