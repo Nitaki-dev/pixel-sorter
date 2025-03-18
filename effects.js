@@ -44,6 +44,7 @@ function effect_pixelate_function() {
 }
 
 function effect_color_quant_function() {
+    if (visualizeMask) return;
     for (let y = 0; y < p5Instance.height; y++) {
         for (let x = 0; x < p5Instance.width; x++) {
             let i = 4 * (y * p5Instance.width + x);
@@ -59,6 +60,7 @@ function effect_color_quant_function() {
 }
 
 function effect_posterize_function() {
+    if (visualizeMask) return;
     let levels = 4;
     let step = 255 / levels;
     for (let y = 0; y < p5Instance.height; y++) {
@@ -78,6 +80,7 @@ function effect_posterize_function() {
 }
 
 function effect_sharpen_function() {
+    if (visualizeMask) return;
     let kernel = [
         [ 0, -1,  0],
         [-1,  5, -1],
@@ -94,6 +97,7 @@ function effect_sharpen_function() {
 }
 
 function effect_emboss_function() {
+    if (visualizeMask) return;
     let kernel = [
         [-2, -1,  0],
         [-1,  1,  1],
@@ -111,6 +115,7 @@ function effect_emboss_function() {
 }
 
 function effect_dithering_function() {
+    if (visualizeMask) return;
     for (let y = 0; y < p5Instance.height; y++) {
         for (let x = 0; x < p5Instance.width; x++) {
             let i = 4 * (y * p5Instance.width + x);
@@ -132,6 +137,7 @@ function effect_dithering_function() {
 }
 
 function effect_sepia_function() {
+    if (visualizeMask) return;
     for (let y = 0; y < p5Instance.height; y++) {
         for (let x = 0; x < p5Instance.width; x++) {
             let i = 4 * (y * p5Instance.width + x);
@@ -151,6 +157,7 @@ function effect_sepia_function() {
 }
 
 function effect_invert_function() {
+    if (visualizeMask) return;
     for (let y = 0; y < p5Instance.height; y++) {
         for (let x = 0; x < p5Instance.width; x++) {
             let i = 4 * (y * p5Instance.width + x);
@@ -170,6 +177,7 @@ function effect_invert_function() {
 }
 
 function effect_edge_detection_function() {
+    if (visualizeMask) return;
     let kernel = [
         [-1, -1, -1],
         [-1,  8, -1],
@@ -187,6 +195,7 @@ function effect_edge_detection_function() {
 }
 
 function effect_grayscale_function() {
+    if (visualizeMask) return;
     for (let y = 0; y < p5Instance.height; y++) {
         for (let x = 0; x < p5Instance.width; x++) {
             let i = 4 * (y * p5Instance.width + x);
@@ -206,6 +215,7 @@ function effect_grayscale_function() {
 }
 
 function effect_sobel_function() {
+    if (visualizeMask) return;
     let kernelX = [
         [-1, 0, 1],
         [-2, 0, 2],
@@ -265,6 +275,7 @@ function effect_chromatic_aberration_function() {
 }
 
 function effect_film_grain_function() {
+    if (visualizeMask) return;
     let intensity = 25;
 
     for (let y = 0; y < p5Instance.height; y++) {
@@ -287,6 +298,7 @@ function effect_film_grain_function() {
 }
 
 function effect_vignette_function() {
+    if (visualizeMask) return;
     // adaptation of https://github.com/GarrettGunnell/AcerolaFX/blob/main/Shaders/AcerolaFX_Vignette.fx
     let VignetteColor = [0, 0, 0];
     let VignetteSize = 1.0; 

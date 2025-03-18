@@ -469,6 +469,29 @@ function updateThresholds(currentFrame, totalFrames) {
     return [lowThreshold, highThreshold];
 }
 
+document.getElementById('lowThreshold').addEventListener('change', function() {
+    if (document.getElementById('maskSort').checked && document.getElementById('displayMask').checked) {
+        sortPixels();
+    }
+});
+
+document.getElementById('highThreshold').addEventListener('change', function() {
+    if (document.getElementById('maskSort').checked && document.getElementById('displayMask').checked) {
+        sortPixels();
+    }
+});
+
+document.getElementById('displayMask').addEventListener('change', function() {
+    if (document.getElementById('maskSort').checked) {
+        if (this.checked) {
+            sortPixels();
+        } else {
+            revertChanges();
+        }
+    }
+    
+});
+
 document.addEventListener('DOMContentLoaded', function() {
     if (document.getElementById('maskSort').checked) {
         document.getElementById('maskOptions').style.display = 'block';
