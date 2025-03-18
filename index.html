@@ -15,7 +15,6 @@
             <h3 id="mobile-alert">this does not work properly on mobile</h3>
             <br>
             <input aria-label="Load image" type="file" id="inputImage" accept="image/*" onchange="loadImage(event)">
-            <br>
             <div id="dropdowns-container">
                 <select aria-label="Sorting direction" id="sortDirection">
                     <option value="horizontal">Horizontal</option>
@@ -31,36 +30,39 @@
                     <option value="hue">Hue</option>
                 </select>
             </div>
-            <br>
             <div>
                 <input aria-label="Reverse Sort" type="checkbox" id="reverseSort" value="true"> Reverse Sort <!-- reverse the sort direction -->
                 <input aria-label="Use mask" type="checkbox" id="maskSort" value="true"> Use Mask <!-- create a black and white mast -->
-                <input aria-label="Show" type="checkbox" id="displayMask" value="true"> Display
+                <br>
+                <input aria-label="Display mask" type="checkbox" id="displayMask" value="true"> Display mask <!-- display the mask -->
+                <input aria-label="Random mask offset" type="checkbox" id="ramdomMaskOffset" value="true"> Random mask offset <!-- randomize the mask offset -->
             </div>
-            <div>
-                <input type="number" id="lowThreshold" min="0" max="1" step="0.01" value="0.30">
+            <div id="threshold">
+                <input type="number" id="lowThreshold" min="0" max="1" step="0.01" value="0.28">
                 <label for="lowThreshold">Low threshold</label>
-                <input type="number" id="highThreshold" min="0" max="1" step="0.01" value="0.70">
+                <input type="number" id="highThreshold" min="0" max="1" step="0.01" value="0.81">
                 <label for="highThreshold">High threshold</label>
             </div>
-            <br>
             <select aria-label="Effects" id="selectedEffects">
                 <option value="none">None</option>
                 <option value="dithering">Dithering</option>
                 <option value="quantization">Color Quantization</option>
             </select>
-            <br>
             <button id="sort-btn" type="submit" onclick="sortPixels()">Sort Pixels</button>
-            <br>
             <button id="revert-btn" type="submit" onclick="revertChanges()">Revert changes</button>
-            <br>
             <p id="logs"></p>
-            <br>
-            <button id="saveButton">Save Image</button>
+            <button id="image-export-button">Save Image</button>
+            <!-- <div>
+                <button id="gif-export-button" type="submit" onclick="exportGIF()">Export as a GIF animation</button>
+                <input type="number" id="gifFrames" min="2" max="120" step="1" value="30">
+                <label for="gifFrames">GIF frames</label>
+            </div> -->
         </div>
         <div class="main-right" id="image-holder"></div>
     </main>
-    <script src="p5.js"></script>    
+    <script src="p5.js"></script>
+    <!-- <script src="p5.capture.js"></script> -->
+    <script src="nitaki-lib.js"></script>
     <script src="pixel_sorter.js"></script>
 </body>
 </html>
