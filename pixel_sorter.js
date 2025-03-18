@@ -5,6 +5,11 @@ let visualizeMask = false;
 
 let randomMaskOffset = 15;
 
+let initialLowThreshold;
+let initialHighThreshold;
+let finalLowThreshold;
+let finalHighThreshold;
+
 function loadImage(event) {
     let file = event.target.files[0];
     if (file.type.startsWith('image/')) {
@@ -126,12 +131,9 @@ async function sortPixels() {
         visualizeMask = document.getElementById('displayMask').checked;
         let ramdomMaskOffset = document.getElementById('ramdomMaskOffset').checked;
 
-        console.log(sortColor + ", " + sortDirection + ", R:" + reverseSort + ", M:" + maskSort + ", E:" + selectedEffects);
-
         p5Instance.loadPixels();
 
         if (selectedEffects === 'dithering') {
-            log(countUniqueColors(p5Instance.pixels) + ' unique colors in original image');
             for (let y = 0; y < p5Instance.height; y++) {
                 for (let x = 0; x < p5Instance.width; x++) {
                     let i = 4 * (y * p5Instance.width + x);
@@ -150,9 +152,7 @@ async function sortPixels() {
                     applyDithering(p5Instance.pixels, x, y, quantError);
                 }
             }
-            stackLogs(countUniqueColors(p5Instance.pixels) + " unique colors after dithering");
         } else if (selectedEffects === 'quantization') {
-            log(countUniqueColors(p5Instance.pixels) + ' unique colors in original image');
             for (let y = 0; y < p5Instance.height; y++) {
                 for (let x = 0; x < p5Instance.width; x++) {
                     let i = 4 * (y * p5Instance.width + x);
@@ -165,7 +165,6 @@ async function sortPixels() {
                     p5Instance.pixels[i + 2] = pixel.b;
                 }
             }
-            stackLogs(countUniqueColors(p5Instance.pixels) + " unique colors after quantization");
         }
 
         let mask = [];
@@ -261,6 +260,10 @@ async function sortPixels() {
                     if (reverseSort) {
                         row.reverse();
                     }
+                    if (ramdomMaskOffset) {
+                        let offset = Math.floor(Math.random() * randomMaskOffset);
+                        row = row.slice(offset).concat(row.slice(0, offset));
+                    }
                     setRow(y, row);
                 }
             }
@@ -292,6 +295,10 @@ async function sortPixels() {
                     column.sort(sortFunction);
                     if (reverseSort) {
                         column.reverse();
+                    }
+                    if (ramdomMaskOffset) {
+                        let offset = Math.floor(Math.random() * randomMaskOffset);
+                        column = column.slice(offset).concat(column.slice(0, offset));
                     }
                     setColumn(x, column);
                 }
@@ -363,7 +370,6 @@ function revertChanges() {
         }
         p5Instance.updatePixels();
         p5Instance.redraw();
-        log("Image returned to original state");
     } else {
         log("No image loaded");
     }
@@ -427,6 +433,14 @@ function setColumn(x, column) {
     }
 }
 
+document.getElementById('maskSort').addEventListener('change', function() {
+    if (this.checked) {
+        document.getElementById('maskOptions').style.display = 'block';
+    } else {
+        document.getElementById('maskOptions').style.display = 'none';
+    }
+});
+
 document.getElementById('image-export-button').addEventListener('click', function() {
     if (!img) {
         log("No image loaded");
@@ -435,18 +449,68 @@ document.getElementById('image-export-button').addEventListener('click', functio
     }
 });
 
-// async function exportGIF() {
-//     if (!img) {
-//         log("No image loaded");
-//     } else {
-//         let currentFrame = 0;
-//         let maxFrames = parseInt(document.getElementById('gifFrames').value);
+function updateThresholds(frame, totalFrames) {
+    lowThreshold = initialLowThreshold + (finalLowThreshold - initialLowThreshold) * (frame / totalFrames);
+    highThreshold = initialHighThreshold + (finalHighThreshold - initialHighThreshold) * (frame / totalFrames);
+    return [lowThreshold, highThreshold];
+}
 
-//         for (currentFrame; currentFrame < maxFrames; currentFrame++) {
-//             log(`Exporting GIF... <br> Frame ${currentFrame} of ${maxFrames}`);
-//             console.log(`Exporting GIF... <br> Frame ${currentFrame} of ${maxFrames}`);
-//             sortPixels();
-//             await sortPixels();
-//         }
-//     }
-// }
+document.getElementById('gif-export-button').addEventListener('click', async function() {
+    if (!img) {
+        log("No image loaded");
+    } else {        
+        log("Rendering gif, this may take a while...");
+        let gif = new GIF({
+            workers: 2,
+            quality: 100,
+            width: img.width,
+            height: img.height
+        });
+
+        initialLowThreshold = 0;
+        initialHighThreshold = 0;
+        finalLowThreshold = parseFloat(document.getElementById('lowThreshold').value);
+        finalHighThreshold = parseFloat(document.getElementById('highThreshold').value);
+        
+        let frames = Number(document.getElementById('gifFrames').value);
+        let mode = document.getElementById('selectedGifMode').value;
+        
+        let originalPixels = [...p5Instance.pixels];
+
+        for(let i=0; i<frames; i++) {
+            switch(mode) {
+                case 'AnimateWithOffset':
+                    document.getElementById('ramdomMaskOffset').checked = true;
+                    break;
+                case 'AnimateWithThreshold':                    
+                    document.getElementById('maskSort').checked = true;
+                    let thresholds = updateThresholds(i, frames);
+                    document.getElementById('lowThreshold').value = thresholds[0];
+                    document.getElementById('highThreshold').value = thresholds[1];
+                    break;
+                default:
+                    log("Invalid mode: " + mode);
+                    return;
+            }
+            
+            await sortPixels();
+            gif.addFrame(document.getElementById('image-canvas'), {copy: true, delay: 10});
+            await new Promise(resolve => setTimeout(resolve, 0));
+            log("Rendering gif, this may take a while...");
+            stackLogs("Frame " + (i+1) + " of " + frames + " complete");
+
+            p5Instance.pixels = [...originalPixels];
+        }
+
+        log("Done! The GIF will download automatically soon.");
+
+        gif.on('finished', function(blob) {
+            let url= URL.createObjectURL(blob);
+            let link = document.createElement('a');
+            link.download = 'sorted-gif.gif';
+            link.href = url;
+            link.click();
+        });
+        gif.render();
+    }
+});

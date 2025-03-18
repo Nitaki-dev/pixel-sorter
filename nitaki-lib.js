@@ -4,12 +4,18 @@ function sleep(ms) {
 
 function log(message) {
     var logger = document.getElementById('logs');
-    logger.innerHTML = message;
+    requestAnimationFrame(function() {
+        console.log(message);
+        logger.innerHTML = message;
+    });
 }
 
 function stackLogs(message) {
     var logger = document.getElementById('logs');
-    logger.innerHTML += '<br>' + message;
+    requestAnimationFrame(function() {
+        console.log(message);
+        logger.innerHTML += '<br>' + message;
+    });
 }
 
 function RGBToHSL(r, g, b) {

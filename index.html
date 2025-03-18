@@ -14,12 +14,15 @@
             <h1>Nitaki's pixel sorter</h1>
             <h3 id="mobile-alert">this does not work properly on mobile</h3>
             <br>
+
             <input aria-label="Load image" type="file" id="inputImage" accept="image/*" onchange="loadImage(event)">
+            
             <div id="dropdowns-container">
                 <select aria-label="Sorting direction" id="sortDirection">
                     <option value="horizontal">Horizontal</option>
                     <option value="vertical">Vertical</option>
                 </select>
+
                 <select aria-label="Sorthing method" id="sortColor">
                     <option value="RGB">RGB</option>
                     <option value="red">Red</option>
@@ -30,38 +33,62 @@
                     <option value="hue">Hue</option>
                 </select>
             </div>
-            <div>
+
+            <div id="firstOptions">
                 <input aria-label="Reverse Sort" type="checkbox" id="reverseSort" value="true"> Reverse Sort <!-- reverse the sort direction -->
                 <input aria-label="Use mask" type="checkbox" id="maskSort" value="true"> Use Mask <!-- create a black and white mast -->
-                <br>
+            </div>
+
+            <div id="maskOptions">
                 <input aria-label="Display mask" type="checkbox" id="displayMask" value="true"> Display mask <!-- display the mask -->
-                <input aria-label="Random mask offset" type="checkbox" id="ramdomMaskOffset" value="true"> Random mask offset <!-- randomize the mask offset -->
+                <input aria-label="Random mask offset" type="checkbox" id="ramdomMaskOffset" value="true"> Random offset <!-- randomize the mask offset -->
+                <br>
+                <input aria-label="Mask offset" type="number" id="randomMaskOffset" min="0" max="30" step="1" value="15"> <!-- mask offset -->
+                <label for="randomMaskOffset">Randomly offset the mask's spans</label>
+                <div id="threshold">
+                    <input type="number" id="lowThreshold" min="0" max="1" step="0.01" value="0.28">
+                    <label for="lowThreshold">Low threshold</label>
+                    <input type="number" id="highThreshold" min="0" max="1" step="0.01" value="0.81">
+                    <label for="highThreshold">High threshold</label>
+                </div>
             </div>
-            <div id="threshold">
-                <input type="number" id="lowThreshold" min="0" max="1" step="0.01" value="0.28">
-                <label for="lowThreshold">Low threshold</label>
-                <input type="number" id="highThreshold" min="0" max="1" step="0.01" value="0.81">
-                <label for="highThreshold">High threshold</label>
-            </div>
+
             <select aria-label="Effects" id="selectedEffects">
                 <option value="none">None</option>
                 <option value="dithering">Dithering</option>
                 <option value="quantization">Color Quantization</option>
             </select>
-            <button id="sort-btn" type="submit" onclick="sortPixels()">Sort Pixels</button>
-            <button id="revert-btn" type="submit" onclick="revertChanges()">Revert changes</button>
-            <p id="logs"></p>
+
+            <div id="sort-div">
+                <button id="sort-btn" type="submit" onclick="sortPixels()">Sort Pixels</button>
+                <button id="revert-btn" type="submit" onclick="revertChanges()">
+                    <img src="imgs/revet.png" alt="revert changes">
+                </button>
+            </div>
+
             <button id="image-export-button">Save Image</button>
-            <!-- <div>
-                <button id="gif-export-button" type="submit" onclick="exportGIF()">Export as a GIF animation</button>
+
+            <div style="margin-bottom: 0.5rem;">
                 <input type="number" id="gifFrames" min="2" max="120" step="1" value="30">
                 <label for="gifFrames">GIF frames</label>
-            </div> -->
+            </div>
+
+            <select aria-label="Gif export mode" id="selectedGifMode">
+                <option value="AnimateWithOffset">Animate with random offset</option>
+                <option value="AnimateWithThreshold">animate with threshold</option>
+            </select>
+
+            <button id="gif-export-button" type="submit">Export as a GIF animation</button>
+
+            <p id="logs"></p>
+ 
         </div>
-        <div class="main-right" id="image-holder"></div>
+        <div class="main-right">
+            <div id="image-holder"></div>
+        </div>
     </main>
     <script src="p5.js"></script>
-    <!-- <script src="p5.capture.js"></script> -->
+    <script src="gif.js"></script>
     <script src="nitaki-lib.js"></script>
     <script src="pixel_sorter.js"></script>
 </body>
