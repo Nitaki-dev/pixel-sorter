@@ -20,7 +20,7 @@ main {
     justify-content: center;
     height: 100vh;
     width: 25%;
-    min-width: 285px;
+    min-width: 380px;
     padding: 1rem;
     outline: 1px solid #313131;
     overflow-x: hidden;
@@ -56,10 +56,10 @@ button {padding: 0.5rem;}
 button:hover {cursor: pointer;}
 select {padding: 0.5rem;}
 select:hover {cursor: pointer;}
-input:not(#lowThreshold):not(#highThreshold):not(#gifFrames):not(#gifDelay):not(#randomMaskOffset){padding: 0.5rem;}
-input[type=number] {width: 50px; text-align: center;}
+input:not([type=number]){padding: 0.5rem;}
+input[type=number] {width: 50px; text-align: center; padding: 0rem;}
 input:hover {cursor: pointer;}
-button, select, #logs, #firstOptions {margin-bottom: 0.5rem;}
+button:not(.toggle-button), select, #logs, #firstOptions {margin-bottom: 0.5rem;}
 #maskOptions {display: none; border-radius: 0.3rem; border: 1px solid #313131; padding: 0.3rem; margin-bottom: 0.5rem;}
 #sort-div > button > img {-webkit-filter: invert(100%); filter: invert(100%); width: 1rem; opacity: 0.9; max-width: 1rem; max-height: 1rem;}
 #sort-btn {width: 100%; margin-right: 0.5rem;}
@@ -77,6 +77,17 @@ button, select, #logs, #firstOptions {margin-bottom: 0.5rem;}
     border: 1px solid #313131; 
     border-radius: 0.3rem;
     padding: 0.3rem;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+}
+
+.effect {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 50%;
+    text-align: center;
 }
 
 #effect-options > div {
@@ -105,7 +116,7 @@ input[type=checkbox] {
     margin-right: 0.3rem;
 }
 
-#effect-list > div > div > input[type=checkbox] {
+#effect-list > div > input[type=checkbox] {
     margin-left: 0rem; 
     margin-right: 0em;
 }
@@ -134,7 +145,7 @@ input[type=range] {
     background: #212121;
     outline: none;
     border-radius: 5rem;
-    margin-right: 0.3rem;
+    /* margin-right: 0.3rem; */
 }
 
 input[type=range]::-webkit-slider-thumb, input[type=range]::-moz-range-thumb{
@@ -183,7 +194,7 @@ input[type=range]::-ms-thumb {
 input, select, button, .custom-file-upload {
     background-color: #212121;
     border: 1px solid #2e2e2e;
-    border-radius: 0.5rem;
+    border-radius: 0.5rem;;
 }
 
 .custom-file-upload {
@@ -216,4 +227,52 @@ input, select, button, .custom-file-upload {
 
 @media (pointer:none), (pointer:coarse) {
     #mobile-alert {display: block;}
+}
+
+.draggable {
+    border-radius: 0.3rem;
+    outline: 1px solid #313131;
+    background-color: #121212;
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0.2rem 0.2rem 0.5rem #00000096;
+}
+
+.draggable > * {
+    margin-bottom: 0rem;
+}
+
+.draggable > div:not(.draggable-header) {
+    display: flex;
+    flex-direction: column;
+}
+
+.draggable-header {
+    height: 1.5rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.draggable > div > label {
+    margin-top: 0.3rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.draggable > div > label:first-child {
+    border-top: 1px solid #313131;
+    padding-top: 0.3rem;
+}
+
+.toggle-button {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
 }

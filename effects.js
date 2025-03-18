@@ -25,8 +25,8 @@ function applyKernel(kernel) {
     return result;
 }
 
-function effect_pixelate_function() {
-    let pixelSize = 2;
+function effect_pixelate_function(pixel_size) {
+    let pixelSize = pixel_size;
     for (let y = 0; y < p5Instance.height; y += pixelSize) {
         for (let x = 0; x < p5Instance.width; x += pixelSize) {
             let i = 4 * (y * p5Instance.width + x);
@@ -59,9 +59,9 @@ function effect_color_quant_function() {
     }
 }
 
-function effect_posterize_function() {
+function effect_posterize_function(level) {
     if (visualizeMask) return;
-    let levels = 4;
+    let levels = level;
     let step = 255 / levels;
     for (let y = 0; y < p5Instance.height; y++) {
         for (let x = 0; x < p5Instance.width; x++) {
@@ -134,6 +134,7 @@ function effect_dithering_function() {
             applyDithering(p5Instance.pixels, x, y, quantError);
         }
     }
+    console.log("Dithering done");
 }
 
 function effect_sepia_function() {
@@ -297,15 +298,15 @@ function effect_film_grain_function() {
     }
 }
 
-function effect_vignette_function() {
+function effect_vignette_function(size, intensity, roundness, smoothness) {
     if (visualizeMask) return;
     // adaptation of https://github.com/GarrettGunnell/AcerolaFX/blob/main/Shaders/AcerolaFX_Vignette.fx
     let VignetteColor = [0, 0, 0];
-    let VignetteSize = 1.0; 
+    let VignetteSize = size; 
     let VignetteOffset = 0.0; 
-    let Intensity = 1.0;
-    let Roundness = 1.0;
-    let Smoothness = 1.0;
+    let Intensity = intensity;
+    let Roundness = roundness;
+    let Smoothness = smoothness;
 
     for (let y = 0; y < p5Instance.height; y++) {
         for (let x = 0; x < p5Instance.width; x++) {
@@ -387,4 +388,80 @@ function effect_color_correction(c, b, s, g) {
         pixels[i + 1] = clamp(g, 0, 255);
         pixels[i + 2] = clamp(b, 0, 255);
     }
+}
+
+//TODO: 
+// - Exposure
+// - Temperature
+// - Tint
+// - COntrast
+// - Linear Mid Point
+// - Brightness
+// - Color Filter
+// - Color Filter Intensity (HDR)
+// - Saturation
+// - bloom
+//    Explenation of bloom (this is all in a single function)): 
+//     Filter pixels so only the bright ones are seleted
+//     Blur the selected pixels
+//     Add the blurred pixels to the original image
+//     Tone map the image to prevent overexposure
+
+function effect_bloom_function() {
+    let pixels = p5Instance.pixels;
+    let width = p5Instance.width;
+    let height = p5Instance.height;
+
+    // Step 1: Filter pixels to select only the bright ones
+    let brightPixels = new Uint8Array(pixels.length);
+    for (let i = 0; i < pixels.length; i += 4) {
+        let brightness = 0.3 * pixels[i] + 0.59 * pixels[i + 1] + 0.11 * pixels[i + 2]; // Approximate brightness calculation
+        if (brightness > 200) { // You may need to adjust this threshold
+            brightPixels[i] = pixels[i];
+            brightPixels[i + 1] = pixels[i + 1];
+            brightPixels[i + 2] = pixels[i + 2];
+            brightPixels[i + 3] = 255;
+        }
+    }
+
+    // Step 2: Blur the selected pixels (simple box blur for illustration)
+    let blurredPixels = new Uint8Array(pixels.length);
+    let blurSize = 5; // You may need to adjust this value
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+            let r = 0, g = 0, b = 0, count = 0;
+            for (let dx = -blurSize; dx <= blurSize; dx++) {
+                for (let dy = -blurSize; dy <= blurSize; dy++) {
+                    let nx = x + dx;
+                    let ny = y + dy;
+                    if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
+                        let i = 4 * (ny * width + nx);
+                        r += brightPixels[i];
+                        g += brightPixels[i + 1];
+                        b += brightPixels[i + 2];
+                        count++;
+                    }
+                }
+            }
+            let i = 4 * (y * width + x);
+            blurredPixels[i] = r / count;
+            blurredPixels[i + 1] = g / count;
+            blurredPixels[i + 2] = b / count;
+            blurredPixels[i + 3] = 255;
+        }
+    }
+
+    // Step 3: Add the blurred pixels to the original image
+    for (let i = 0; i < pixels.length; i += 4) {
+        pixels[i] += blurredPixels[i];
+        pixels[i + 1] += blurredPixels[i + 1];
+        pixels[i + 2] += blurredPixels[i + 2];
+        // Tone mapping (clamp to prevent overexposure)
+        pixels[i] = Math.min(pixels[i], 255);
+        pixels[i + 1] = Math.min(pixels[i + 1], 255);
+        pixels[i + 2] = Math.min(pixels[i + 2], 255);
+    }
+
+    // Apply the updated pixels
+    p5Instance.updatePixels();
 }
