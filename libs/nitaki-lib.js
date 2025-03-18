@@ -18,6 +18,10 @@ function stackLogs(message) {
     });
 }
 
+function clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max);
+}
+
 function RGBToHSL(r, g, b) {
     r /= 255, g /= 255, b /= 255;
     let max = Math.max(r, g, b), min = Math.min(r, g, b);
@@ -86,6 +90,31 @@ function RGBToHSV(r, g, b) {
         h /= 6;
     }    
     return [h, s, v];
+}
+
+function HSVtoRGB(h, s, v) {
+    var r, g, b;
+    var i = Math.floor(h * 6);
+
+    var f = h * 6 - i;
+    var p = v * (1 - s);
+    var q = v * (1 - f * s);
+    var t = v * (1 - (1 - f) * s);
+
+    switch(i % 6) {
+        case 0: r = v, g = t, b = p; break;
+        case 1: r = q, g = v, b = p; break;
+        case 2: r = p, g = v, b = t; break;
+        case 3: r = p, g = q, b = v; break;
+        case 4: r = t, g = p, b = v; break;
+        case 5: r = v, g = p, b = q; break;
+    }
+
+    r = Math.round(r * 255);
+    g = Math.round(g * 255);
+    b = Math.round(b * 255);
+
+    return [r, g, b];
 }
 
 function RGBToHex(r, g, b) {

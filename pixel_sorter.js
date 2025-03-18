@@ -78,6 +78,13 @@ let effect_chromatic_aberration = document.getElementById("effect_chromatic_aber
 let effect_film_grain = document.getElementById("effect_film_grain");
 let effect_vignette = document.getElementById("effect_vignette");
 
+let use_color_correction = document.getElementById("use_color_correction");
+
+let color_correction_contrast = document.getElementById("color_correction_contrast");
+let color_correction_brightness = document.getElementById("color_correction_brightness");
+let color_correction_saturation = document.getElementById("color_correction_saturation");
+let color_correction_gamma = document.getElementById("color_correction_gamma");
+
 async function sortPixels() {
     if (img) {
         revertChanges();
@@ -105,6 +112,13 @@ async function sortPixels() {
         effect_film_grain = document.getElementById("effect_film_grain");
         effect_vignette = document.getElementById("effect_vignette");
 
+        use_color_correction = document.getElementById("use_color_correction");
+
+        color_correction_contrast = document.getElementById("color_correction_contrast");
+        color_correction_brightness = document.getElementById("color_correction_brightness");
+        color_correction_saturation = document.getElementById("color_correction_saturation");
+        color_correction_gamma = document.getElementById("color_correction_gamma");
+
         p5Instance.loadPixels();
 
         let mask = [];
@@ -128,21 +142,30 @@ async function sortPixels() {
         }
 
         if (useEffects.checked) {               
-            if (effect_posterize.checked) effect_posterize_function()
-            if (effect_sharpen.checked) effect_sharpen_function()
-            if (effect_emboss.checked) effect_emboss_function()
-            if (effect_sepia.checked) effect_sepia_function()
-            if (effect_invert.checked) effect_invert_function()
-            if (effect_edge_detection.checked) effect_edge_detection_function()
-            if (effect_grayscale.checked) effect_grayscale_function()
-            if (effect_sobel.checked) effect_sobel_function()
-            if (effect_color_quant.checked) effect_color_quant_function()
-            if (effect_dithering.checked) effect_dithering_function()
-            if (effect_chromatic_aberration.checked) effect_chromatic_aberration_function()
-            if (effect_film_grain.checked) effect_film_grain_function()
-            if (effect_vignette.checked) effect_vignette_function()
+            if (effect_posterize.checked) effect_posterize_function();
+            if (effect_sharpen.checked) effect_sharpen_function();
+            if (effect_emboss.checked) effect_emboss_function();
+            if (effect_sepia.checked) effect_sepia_function();
+            if (effect_invert.checked) effect_invert_function();
+            if (effect_edge_detection.checked) effect_edge_detection_function();
+            if (effect_grayscale.checked) effect_grayscale_function();
+            if (effect_sobel.checked) effect_sobel_function();
+            if (effect_color_quant.checked) effect_color_quant_function();
+            if (effect_dithering.checked) effect_dithering_function();
+            if (effect_chromatic_aberration.checked) effect_chromatic_aberration_function();
+            if (effect_film_grain.checked) effect_film_grain_function();
+            if (effect_vignette.checked) effect_vignette_function();
         }
 
+        if (use_color_correction.checked) {
+            effect_color_correction(
+                Number(color_correction_contrast.value),
+                Number(color_correction_brightness.value),
+                Number(color_correction_saturation.value),
+                Number(color_correction_gamma.value)
+            );
+        }
+        
         let sortFunction;
         switch (sortColor) {
             case 'RGB':
@@ -504,6 +527,12 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         document.getElementById('effect-list').style.display = 'none';
     }
+
+    if (document.getElementById('use_color_correction').checked) {
+        document.getElementById('color_correction').style.display = 'flex';
+    } else {
+        document.getElementById('color_correction').style.display = 'none';
+    }
 });
 
 document.getElementById('maskSort').addEventListener('change', function() {
@@ -519,6 +548,14 @@ document.getElementById('useEffects').addEventListener('change', function() {
         document.getElementById('effect-list').style.display = 'flex';
     } else {
         document.getElementById('effect-list').style.display = 'none';
+    }
+});
+
+document.getElementById('use_color_correction').addEventListener('change', function() {
+    if (this.checked) {
+        document.getElementById('color_correction').style.display = 'flex';
+    } else {
+        document.getElementById('color_correction').style.display = 'none';
     }
 });
 

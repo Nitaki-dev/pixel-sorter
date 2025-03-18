@@ -339,3 +339,56 @@ function effect_vignette_function() {
         }
     }
 }
+
+function effect_color_correction(c, b, s, g) {
+    if (visualizeMask) return;
+    let pixels = p5Instance.pixels;
+
+    let contrast = 1.2; // range from 0 to 2, 1 means no change
+    let brightness = 0; // range from -255 to 255, 0 means no change
+    let saturation = 1.5; // range from 0 to 2, 1 means no change
+    let gamma = 0.8; // usually in range from 0.8 to 2.2
+
+    console.log(contrast, brightness, saturation, gamma); //these values work
+
+    contrast = c;
+    brightness = b;
+    saturation = s;
+    gamma = g;
+
+    console.log(contrast, brightness, saturation, gamma); //these values dont work
+
+    for (let i = 0; i < pixels.length; i += 4) {
+        let r = pixels[i];
+        let g = pixels[i + 1];
+        let b = pixels[i + 2];
+
+        //contrast
+        r = ((r - 128) * contrast) + 128;
+        g = ((g - 128) * contrast) + 128;
+        b = ((b - 128) * contrast) + 128;
+
+        //brightness
+        r += brightness;
+        g += brightness;
+        b += brightness;
+
+        //saturation
+        let hsl = RGBToHSL(r, g, b);
+        hsl[1] *= saturation;
+
+        let rgb = HSLToRGB(hsl[0], hsl[1], hsl[2]);
+        r = rgb[0];
+        g = rgb[1];
+        b = rgb[2];
+
+        //gamma
+        r = Math.pow(r / 255, 1 / gamma) * 255;
+        g = Math.pow(g / 255, 1 / gamma) * 255;
+        b = Math.pow(b / 255, 1 / gamma) * 255;
+
+        pixels[i] = clamp(r, 0, 255);
+        pixels[i + 1] = clamp(g, 0, 255);
+        pixels[i + 2] = clamp(b, 0, 255);
+    }
+}
