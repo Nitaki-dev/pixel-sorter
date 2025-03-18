@@ -452,6 +452,14 @@ document.getElementById('maskSort').addEventListener('change', function() {
     }
 });
 
+document.addEventListener('DOMContentLoaded', function() {
+    if (document.getElementById('maskSort').checked) {
+        document.getElementById('maskOptions').style.display = 'block';
+    } else {
+        document.getElementById('maskOptions').style.display = 'none';
+    }
+});
+
 document.getElementById('image-export-button').addEventListener('click', function() {
     if (!img) {
         log("No image loaded");
