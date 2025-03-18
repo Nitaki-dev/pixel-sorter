@@ -249,19 +249,26 @@ function effect_sobel_function() {
     }
 }
 
-function effect_chromatic_aberration_function() {
+function effect_chromatic_aberration_function(use_random_offset, redOffsets, greenOffsets, blueOffsets) {
     let pixelsCopy = p5Instance.pixels.slice();
     let width = p5Instance.width;
     let height = p5Instance.height;
 
-    let maxOffset = 10;
+    let use_random = use_random_offset;
 
+    let maxOffset = 10;
+    
     let redOffset = Math.floor(Math.random() * maxOffset);
     let greenOffset = Math.floor(Math.random() * maxOffset);
     let blueOffset = Math.floor(Math.random() * maxOffset);
 
-    for (let y = 0; y < height; y++) {
+    if (!use_random) {
+        redOffset = redOffsets;
+        greenOffset = greenOffsets;
+        blueOffset = blueOffsets;
+    }
 
+    for (let y = 0; y < height; y++) {
         for (let x = 0; x < width; x++) {
             let i = 4 * (y * width + x);
             let newI = 4 * (y * width + (x + redOffset));

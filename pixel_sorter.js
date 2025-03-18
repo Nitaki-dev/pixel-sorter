@@ -1,8 +1,6 @@
 let img;
 let p5Instance = null;
 
-let randomMaskOffset = 15;
-
 let initialLowThreshold;
 let initialHighThreshold;
 let finalLowThreshold;
@@ -57,8 +55,8 @@ let sortColor = document.getElementById('sortColor').value;
 let reverseSort = document.getElementById('reverseSort').checked;
 let maskSort = document.getElementById('maskSort').checked;
 let visualizeMask = document.getElementById('displayMask').checked;
-let ramdomMaskOffset = document.getElementById('ramdomMaskOffset').checked;
-
+let randomMaskOffset = document.getElementById('randomMaskOffset').checked;
+let randomMaskOffsetValue = document.getElementById('randomMaskOffsetValue').value;
 
 new_effect("Dithering", false);
 new_effect("Color quantization", false);
@@ -74,7 +72,11 @@ new_effect("Invert", false);
 new_effect("Edge detection", false);
 new_effect("Grayscale", false);
 new_effect("Sobel", false);
-new_effect("Chromatic aberration", false);
+new_effect("Chromatic aberration", true,
+    { name: "Use random offset", type: "checkbox"},
+    { name: "Red offset", type: "number", value: 2, step: 1, min: -10, max: 10},
+    { name: "Green offset", type: "number", value: 3, step: 1, min: -10, max: 10},
+    { name: "Blue offset", type: "number", value: 0, step: 1, min: -10, max: 10});
 new_effect("Film grain", false);
 new_effect("Vignette", true, 
     { name: "Size", type: "number", value: 1.0, step: 0.01, min: 0, max: 3}, 
@@ -99,6 +101,10 @@ let effect_edge_detection = document.getElementById("effect_edge_detection");
 let effect_grayscale = document.getElementById("effect_grayscale");
 let effect_sobel = document.getElementById("effect_sobel");
 let effect_chromatic_aberration = document.getElementById("effect_chromatic_aberration");
+    let effect_chromatic_aberration_random = document.getElementById("chromatic_aberration_settings_use_random_offset");
+    let effect_chromatic_aberration_red = document.getElementById("chromatic_aberration_settings_red_offset");
+    let effect_chromatic_aberration_green = document.getElementById("chromatic_aberration_settings_green_offset");
+    let effect_chromatic_aberration_blue = document.getElementById("chromatic_aberration_settings_blue_offset");
 let effect_film_grain = document.getElementById("effect_film_grain");
 let effect_vignette = document.getElementById("effect_vignette");
     let effect_vignette_size = document.getElementById("vignette_size");
@@ -122,10 +128,12 @@ async function sortPixels() {
         reverseSort = document.getElementById('reverseSort').checked;
         maskSort = document.getElementById('maskSort').checked;
         visualizeMask = document.getElementById('displayMask').checked;
-        ramdomMaskOffset = document.getElementById('ramdomMaskOffset').checked;
 
+        randomMaskOffset = document.getElementById('randomMaskOffset').checked;
+        randomMaskOffsetValue = document.getElementById('randomMaskOffsetValue').value;
+        
         useEffects = document.getElementById('useEffects');
-
+        
         effect_dithering = document.getElementById("effect_dithering");
         effect_color_quantization = document.getElementById("effect_color_quantization");
         effect_posterize = document.getElementById("effect_posterize");
@@ -140,13 +148,17 @@ async function sortPixels() {
         effect_grayscale = document.getElementById("effect_grayscale");
         effect_sobel = document.getElementById("effect_sobel");
         effect_chromatic_aberration = document.getElementById("effect_chromatic_aberration");
+            effect_chromatic_aberration_random = document.getElementById("chromatic_aberration_settings_use_random_offset");
+            effect_chromatic_aberration_red = document.getElementById("chromatic_aberration_settings_red_offset");
+            effect_chromatic_aberration_green = document.getElementById("chromatic_aberration_settings_green_offset");
+            effect_chromatic_aberration_blue = document.getElementById("chromatic_aberration_settings_blue_offset");
         effect_film_grain = document.getElementById("effect_film_grain");
         effect_vignette = document.getElementById("effect_vignette");
             effect_vignette_size = document.getElementById("vignette_settings_size");
             effect_vignette_intensity = document.getElementById("vignette_settings_intensity");
             effect_vignette_roundness = document.getElementById("vignette_settings_roundness");
             effect_vignette_smoothness = document.getElementById("vignette_settings_smoothness");
-
+    
         use_color_correction = document.getElementById("use_color_correction");
 
         color_correction_contrast = document.getElementById("color_correction_contrast");
@@ -178,7 +190,8 @@ async function sortPixels() {
 
         if (useEffects.checked) {               
             // effect_bloom_function();
-            if (effect_posterize.checked) effect_posterize_function(Number(effect_posterize_levels.value));
+            if (effect_posterize.checked) effect_posterize_function(
+                Number(effect_posterize_levels.value));
             if (effect_sharpen.checked) effect_sharpen_function();
             if (effect_emboss.checked) effect_emboss_function();
             if (effect_sepia.checked) effect_sepia_function();
@@ -188,9 +201,17 @@ async function sortPixels() {
             if (effect_sobel.checked) effect_sobel_function();
             if (effect_color_quantization.checked) effect_color_quant_function();
             if (effect_dithering.checked) effect_dithering_function();
-            if (effect_chromatic_aberration.checked) effect_chromatic_aberration_function();
+            if (effect_chromatic_aberration.checked) effect_chromatic_aberration_function(
+                effect_chromatic_aberration_random.checked, 
+                Number(effect_chromatic_aberration_red.value), 
+                Number(effect_chromatic_aberration_green.value), 
+                Number(effect_chromatic_aberration_blue.value));
             if (effect_film_grain.checked) effect_film_grain_function();
-            if (effect_vignette.checked) effect_vignette_function(Number(effect_vignette_size.value), Number(effect_vignette_intensity.value), Number(effect_vignette_roundness.value), Number(effect_vignette_smoothness.value));
+            if (effect_vignette.checked) effect_vignette_function(
+                Number(effect_vignette_size.value), 
+                Number(effect_vignette_intensity.value), 
+                Number(effect_vignette_roundness.value), 
+                Number(effect_vignette_smoothness.value));
 
         }
 
@@ -259,8 +280,8 @@ async function sortPixels() {
                         if (reverseSort) {
                             span.reverse();
                         }
-                        if (ramdomMaskOffset) {
-                            let offset = Math.floor(Math.random() * randomMaskOffset);
+                        if (randomMaskOffset) {
+                            let offset = Math.floor(Math.random() * randomMaskOffsetValue);
                             span = span.slice(offset).concat(span.slice(0, offset));
                         }
                         return span;
@@ -276,8 +297,8 @@ async function sortPixels() {
                     if (reverseSort) {
                         row.reverse();
                     }
-                    if (ramdomMaskOffset) {
-                        let offset = Math.floor(Math.random() * randomMaskOffset);
+                    if (randomMaskOffset) {
+                        let offset = Math.floor(Math.random() * randomMaskOffsetValue);
                         row = row.slice(offset).concat(row.slice(0, offset));
                     }
                     setRow(y, row);
@@ -295,8 +316,8 @@ async function sortPixels() {
                         if (reverseSort) {
                             span.reverse();
                         }
-                        if (ramdomMaskOffset) {
-                            let offset = Math.floor(Math.random() * randomMaskOffset);
+                        if (randomMaskOffset) {
+                            let offset = Math.floor(Math.random() * randomMaskOffsetValue);
                             span = span.slice(offset).concat(span.slice(0, offset));
                         }
                         return span;
@@ -312,8 +333,8 @@ async function sortPixels() {
                     if (reverseSort) {
                         column.reverse();
                     }
-                    if (ramdomMaskOffset) {
-                        let offset = Math.floor(Math.random() * randomMaskOffset);
+                    if (randomMaskOffset) {
+                        let offset = Math.floor(Math.random() * randomMaskOffsetValue);
                         column = column.slice(offset).concat(column.slice(0, offset));
                     }
                     setColumn(x, column);
@@ -388,7 +409,7 @@ function new_effect(name, hasSettings, ...settings) {
             label.innerText = setting.name;
             const input = document.createElement('input');
             input.type = setting.type;
-            input.id = name.toLowerCase() + '_settings_' + setting.name.toLowerCase().replace(/\s+/g, '_');
+            input.id = name.toLowerCase().replace(/\s+/g, '_') + '_settings_' + setting.name.toLowerCase().replace(/\s+/g, '_');
             if (setting.type === 'number') {
                 input.value = setting.value;
                 input.step = setting.step;
@@ -741,7 +762,7 @@ document.getElementById('gif-export-button').addEventListener('click', async fun
         for(let i=0; i<frames; i++) {
             switch(mode) {
                 case 'AnimateWithOffset':
-                    document.getElementById('ramdomMaskOffset').checked = true;
+                    document.getElementById('randomMaskOffset').checked = true;
                     break;
                 case 'AnimateWithThreshold':                    
                     document.getElementById('maskSort').checked = true;
