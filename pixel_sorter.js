@@ -69,10 +69,7 @@ function countUniqueColors(pixels) {
     return uniqueColors.size;
 }
 
-function maskFunction(pixel) {
-    let lowThreshold = parseFloat(document.getElementById('lowThreshold').value);
-    let highThreshold = parseFloat(document.getElementById('highThreshold').value);
-    
+function maskFunction(pixel, lowThreshold, highThreshold) {
     let pixelValue = 0.2989*pixel.r + 0.5870*pixel.g + 0.1140*pixel.b;
     let normalizedValue = pixelValue / 255;
 
@@ -84,18 +81,22 @@ function maskFunction(pixel) {
 }
 
 function maskPixels() {
+    let lowThreshold = parseFloat(document.getElementById('lowThreshold').value);
+    let highThreshold = parseFloat(document.getElementById('highThreshold').value);
+
     let maskedPixels = [];
     let mask = [];
+    let r, g, b, a, pixel, masked;
 
     for (let i = 0; i < p5Instance.pixels.length; i += 4) {
-        let r = p5Instance.pixels[i];
-        let g = p5Instance.pixels[i + 1];
-        let b = p5Instance.pixels[i + 2];
-        let a = p5Instance.pixels[i + 3];
+        r = p5Instance.pixels[i];
+        g = p5Instance.pixels[i + 1];
+        b = p5Instance.pixels[i + 2];
+        a = p5Instance.pixels[i + 3];
 
-        let pixel = {r: r, g: g, b: b, a: a};
+        pixel = {r: r, g: g, b: b, a: a};
 
-        let masked = maskFunction(pixel);
+        masked = maskFunction(pixel, lowThreshold, highThreshold);
         mask.push(masked);
 
         if (visualizeMask) {
@@ -107,6 +108,7 @@ function maskPixels() {
 
     return {maskedPixels, mask};
 }
+
 
 function quantizeColor(c, quanta) {return Math.round(c / quanta) * quanta;}
 function applyQuantization(pixel) {pixel.r = quantizeColor(pixel.r, 32); pixel.g = quantizeColor(pixel.g, 32); pixel.b = quantizeColor(pixel.b, 32);}
@@ -120,16 +122,25 @@ function applyDithering(pixels, x, y, quantError) {
     if (x + 1 < p5Instance.width && y + 1 < p5Instance.height) {index = 4 * ((y + 1) * p5Instance.width + (x + 1)); pixels[index] += quantError.r * 1/16; pixels[index + 1] += quantError.g * 1/16; pixels[index + 2] += quantError.b * 1/16;}
 }
 
+let sortDirection = document.getElementById('sortDirection').value;
+let sortColor = document.getElementById('sortColor').value;
+let reverseSort = document.getElementById('reverseSort').checked;
+let maskSort = document.getElementById('maskSort').checked;
+let selectedEffects = document.getElementById('selectedEffects').value;
+visualizeMask = document.getElementById('displayMask').checked;
+let ramdomMaskOffset = document.getElementById('ramdomMaskOffset').checked;
+
+
 async function sortPixels() {
     if (img) {
         revertChanges();
-        let sortDirection = document.getElementById('sortDirection').value;
-        let sortColor = document.getElementById('sortColor').value;
-        let reverseSort = document.getElementById('reverseSort').checked;
-        let maskSort = document.getElementById('maskSort').checked;
-        let selectedEffects = document.getElementById('selectedEffects').value;
+        sortDirection = document.getElementById('sortDirection').value;
+        sortColor = document.getElementById('sortColor').value;
+        reverseSort = document.getElementById('reverseSort').checked;
+        maskSort = document.getElementById('maskSort').checked;
+        selectedEffects = document.getElementById('selectedEffects').value;
         visualizeMask = document.getElementById('displayMask').checked;
-        let ramdomMaskOffset = document.getElementById('ramdomMaskOffset').checked;
+        ramdomMaskOffset = document.getElementById('ramdomMaskOffset').checked;
 
         p5Instance.loadPixels();
 
