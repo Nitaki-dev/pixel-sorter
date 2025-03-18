@@ -38,7 +38,8 @@ button {padding: 0.5rem;}
 button:hover {cursor: pointer;}
 select {padding: 0.5rem;}
 select:hover {cursor: pointer;}
-input {padding: 0.5rem;}
+input:not(#lowThreshold):not(#highThreshold){padding: 0.5rem;}
+input[type=number] {width: 40px;}
 input:hover {cursor: pointer;}
 
 input[type=checkbox] {
@@ -70,12 +71,12 @@ input[type=checkbox] {
     }
     .main-left {
         width: 100%;
-        height: 56vh;
+        height: 100vh;
         margin: 0;
     }
     .main-right {
         width: 100%;
-        height: 44vh; /* fix here */
+        height: 50vh; /* fix here */
         overflow: auto; /* To add scroll if image is larger than container */
         margin: 0;
         padding: 0;
