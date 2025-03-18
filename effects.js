@@ -349,14 +349,10 @@ function effect_color_correction(c, b, s, g) {
     let saturation = 1.5; // range from 0 to 2, 1 means no change
     let gamma = 0.8; // usually in range from 0.8 to 2.2
 
-    console.log(contrast, brightness, saturation, gamma); //these values work
-
     contrast = c;
     brightness = b;
     saturation = s;
     gamma = g;
-
-    console.log(contrast, brightness, saturation, gamma); //these values dont work
 
     for (let i = 0; i < pixels.length; i += 4) {
         let r = pixels[i];
