@@ -1,10 +1,7 @@
 let img;
 let p5Instance = null;
 
-let initialLowThreshold;
-let initialHighThreshold;
-let finalLowThreshold;
-let finalHighThreshold;
+let initialLowThreshold, initialHighThreshold, finalLowThreshold, finalHighThreshold;
 
 function loadImage(event) {
     let file = event.target.files[0];
@@ -58,67 +55,52 @@ let visualizeMask = document.getElementById('displayMask').checked;
 let randomMaskOffset = document.getElementById('randomMaskOffset').checked;
 let randomMaskOffsetValue = document.getElementById('randomMaskOffsetValue').value;
 
-new_effect("Dithering", false);
-new_effect("Color quantization", false);
-new_effect("Posterize", true, 
+moduleManager.addModule("Dithering", false);
+moduleManager.addModule("Color quantization", false);
+moduleManager.addModule("Posterize", true, 
     { name: "Levels", type: "number", value: 4, step: 1, min: 1, max: 8 } );
-new_effect("Pixelate", true, 
+moduleManager.addModule("Pixelate", true, 
     { name: "Pixel size", type: "number", value: 2, step: 1, min: 1, max: 25} );
-new_effect("Sharpen", false);
-new_effect("Emboss", false);
-new_effect("Sepia", false);
+moduleManager.addModule("Sharpen", false);
+moduleManager.addModule("Emboss", false);
+moduleManager.addModule("Sepia", false);
 
-new_effect("Invert", false);
-new_effect("Edge detection", false);
-new_effect("Grayscale", false);
-new_effect("Sobel", false);
-new_effect("Chromatic aberration", true,
+moduleManager.addModule("Invert", false);
+moduleManager.addModule("Edge detection", false);
+moduleManager.addModule("Grayscale", false);
+moduleManager.addModule("Sobel", false);
+moduleManager.addModule("Chromatic aberration", true,
     { name: "Use random offset", type: "checkbox"},
     { name: "Red offset", type: "number", value: 2, step: 1, min: -10, max: 10},
     { name: "Green offset", type: "number", value: 3, step: 1, min: -10, max: 10},
     { name: "Blue offset", type: "number", value: 0, step: 1, min: -10, max: 10});
-new_effect("Film grain", false);
-new_effect("Vignette", true, 
+moduleManager.addModule("Film grain", false);
+moduleManager.addModule("Vignette", true, 
     { name: "Size", type: "number", value: 1.0, step: 0.01, min: 0, max: 3}, 
     { name: "Intensity", type: "number", value: 1.0, step: 0.01, min: 0.5, max: 3},
     { name: "Roundness", type: "number", value: 1.0, step: 0.01, min: 0.2, max: 1.2},
     { name: "Smoothness", type: "number", value: 1.0, step: 0.01, min: 0, max: 3} );
 
+moduleManager.addModule("Example", true, 
+    { name: "Number setting",   type: "number",   value: 0, step: 1, min: -100, max: 100 },
+    { name: "Checkbox setting", type: "checkbox", value: false },
+    { name: "Color setting",    type: "color",    value: "#000000" },
+    { name: "Range setting",    type: "range",    value: 0, step: 1, min: -100, max: 100 },
+    { name: "Text setting",     type: "text",     value: "Text" } );
+
 let useEffects = document.getElementById('useEffects');
 
-let effect_dithering = document.getElementById("effect_dithering");
-let effect_color_quantization = document.getElementById("effect_color_quantization");
-let effect_posterize = document.getElementById("effect_posterize");
-    let effect_posterize_levels = document.getElementById("posterize_settings_levels");
-let effect_pixelate = document.getElementById("effect_pixelate"); 
-    let effect_pixelate_size = document.getElementById("pixel_size");
-let effect_sharpen = document.getElementById("effect_sharpen");
-let effect_emboss = document.getElementById("effect_emboss");
-let effect_sepia = document.getElementById("effect_sepia");
-
-let effect_invert = document.getElementById("effect_invert");
-let effect_edge_detection = document.getElementById("effect_edge_detection");
-let effect_grayscale = document.getElementById("effect_grayscale");
-let effect_sobel = document.getElementById("effect_sobel");
-let effect_chromatic_aberration = document.getElementById("effect_chromatic_aberration");
-    let effect_chromatic_aberration_random = document.getElementById("chromatic_aberration_settings_use_random_offset");
-    let effect_chromatic_aberration_red = document.getElementById("chromatic_aberration_settings_red_offset");
-    let effect_chromatic_aberration_green = document.getElementById("chromatic_aberration_settings_green_offset");
-    let effect_chromatic_aberration_blue = document.getElementById("chromatic_aberration_settings_blue_offset");
-let effect_film_grain = document.getElementById("effect_film_grain");
-let effect_vignette = document.getElementById("effect_vignette");
-    let effect_vignette_size = document.getElementById("vignette_size");
-    let effect_vignette_intensity = document.getElementById("vignette_intensity");
-    let effect_vignette_roundness = document.getElementById("vignette_roundness");
-    let effect_vignette_smoothness = document.getElementById("vignette_smoothness");
-
-// color correction
 let use_color_correction = document.getElementById("use_color_correction");
 
 let color_correction_contrast = document.getElementById("color_correction_contrast");
 let color_correction_brightness = document.getElementById("color_correction_brightness");
 let color_correction_saturation = document.getElementById("color_correction_saturation");
 let color_correction_gamma = document.getElementById("color_correction_gamma");
+
+logById("color_correction_contrast_value", Number(color_correction_contrast.value))
+logById("color_correction_brightness_value", Number(color_correction_brightness.value))
+logById("color_correction_saturation_value", Number(color_correction_saturation.value))
+logById("color_correction_gamma_value", Number(color_correction_gamma.value)) // Completely Useless and Unrelated Note (CUaUN) 1: I really like hats but I don't have any hats. I want a hat. I want a hat so bad. I want a hat so bad that I'm going to buy a hat. I'm going to buy a hat and I'm going to wear it. I'm going to wear it and I'm going to like it. I'm going to like it so much that I'm going to wear it every day. I'm going to wear it every day and I'm going to like it every day
 
 async function sortPixels() {
     if (img) {
@@ -134,31 +116,6 @@ async function sortPixels() {
         
         useEffects = document.getElementById('useEffects');
         
-        effect_dithering = document.getElementById("effect_dithering");
-        effect_color_quantization = document.getElementById("effect_color_quantization");
-        effect_posterize = document.getElementById("effect_posterize");
-            effect_posterize_levels = document.getElementById("posterize_settings_levels");
-        effect_pixelate = document.getElementById("effect_pixelate");
-            pixelate_settings_pixel_size = document.getElementById("pixelate_settings_pixel_size");
-        effect_sharpen = document.getElementById("effect_sharpen");
-        effect_emboss = document.getElementById("effect_emboss");
-        effect_sepia = document.getElementById("effect_sepia");
-        effect_invert = document.getElementById("effect_invert");
-        effect_edge_detection = document.getElementById("effect_edge_detection");
-        effect_grayscale = document.getElementById("effect_grayscale");
-        effect_sobel = document.getElementById("effect_sobel");
-        effect_chromatic_aberration = document.getElementById("effect_chromatic_aberration");
-            effect_chromatic_aberration_random = document.getElementById("chromatic_aberration_settings_use_random_offset");
-            effect_chromatic_aberration_red = document.getElementById("chromatic_aberration_settings_red_offset");
-            effect_chromatic_aberration_green = document.getElementById("chromatic_aberration_settings_green_offset");
-            effect_chromatic_aberration_blue = document.getElementById("chromatic_aberration_settings_blue_offset");
-        effect_film_grain = document.getElementById("effect_film_grain");
-        effect_vignette = document.getElementById("effect_vignette");
-            effect_vignette_size = document.getElementById("vignette_settings_size");
-            effect_vignette_intensity = document.getElementById("vignette_settings_intensity");
-            effect_vignette_roundness = document.getElementById("vignette_settings_roundness");
-            effect_vignette_smoothness = document.getElementById("vignette_settings_smoothness");
-    
         use_color_correction = document.getElementById("use_color_correction");
 
         color_correction_contrast = document.getElementById("color_correction_contrast");
@@ -168,6 +125,7 @@ async function sortPixels() {
 
         p5Instance.loadPixels();
 
+        
         let mask = [];
 
         if (maskSort) {
@@ -188,31 +146,31 @@ async function sortPixels() {
             }
         }
 
-        if (useEffects.checked) {               
-            // effect_bloom_function();
-            if (effect_posterize.checked) effect_posterize_function(
-                Number(effect_posterize_levels.value));
-            if (effect_sharpen.checked) effect_sharpen_function();
-            if (effect_emboss.checked) effect_emboss_function();
-            if (effect_sepia.checked) effect_sepia_function();
-            if (effect_invert.checked) effect_invert_function();
-            if (effect_edge_detection.checked) effect_edge_detection_function();
-            if (effect_grayscale.checked) effect_grayscale_function();
-            if (effect_sobel.checked) effect_sobel_function();
-            if (effect_color_quantization.checked) effect_color_quant_function();
-            if (effect_dithering.checked) effect_dithering_function();
-            if (effect_chromatic_aberration.checked) effect_chromatic_aberration_function(
-                effect_chromatic_aberration_random.checked, 
-                Number(effect_chromatic_aberration_red.value), 
-                Number(effect_chromatic_aberration_green.value), 
-                Number(effect_chromatic_aberration_blue.value));
-            if (effect_film_grain.checked) effect_film_grain_function();
-            if (effect_vignette.checked) effect_vignette_function(
-                Number(effect_vignette_size.value), 
-                Number(effect_vignette_intensity.value), 
-                Number(effect_vignette_roundness.value), 
-                Number(effect_vignette_smoothness.value));
+        // CUaUN 2: If reincarnation exists, then i hope that i will get reincarnated as a frog. a small frog. with a hat. and also a guitar, because i like playing guitar. but the guitar would have to be really small so my little frog arms would be able to play it 
 
+        if (useEffects.checked) {               
+
+            if (moduleManager.isModuleEnabled("Posterize")) effect_posterize_function(Number(moduleManager.getModuleSetting("Posterize", "Levels")));
+            if (moduleManager.isModuleEnabled("Sharpen")) effect_sharpen_function();
+            if (moduleManager.isModuleEnabled("Emboss")) effect_emboss_function();
+            if (moduleManager.isModuleEnabled("Sepia")) effect_sepia_function();
+            if (moduleManager.isModuleEnabled("Invert")) effect_invert_function();
+            if (moduleManager.isModuleEnabled("Edge detection")) effect_edge_detection_function();
+            if (moduleManager.isModuleEnabled("Grayscale")) effect_grayscale_function();
+            if (moduleManager.isModuleEnabled("Sobel")) effect_sobel_function();
+            if (moduleManager.isModuleEnabled("Chromatic aberration")) effect_chromatic_aberration_function(
+                Number(moduleManager.getModuleSetting("Chromatic aberration", "Use random offset")),
+                Number(moduleManager.getModuleSetting("Chromatic aberration", "Red offset")),
+                Number(moduleManager.getModuleSetting("Chromatic aberration", "Green offset")),
+                Number(moduleManager.getModuleSetting("Chromatic aberration", "Blue offset")));
+            if (moduleManager.isModuleEnabled("Color quantization")) effect_color_quant_function(); // CUaUN 3: When i was a kid i jokingly said that i wanned to become a doorknob salesman, but people took me seriously
+            if (moduleManager.isModuleEnabled("Dithering")) effect_dithering_function();
+            if (moduleManager.isModuleEnabled("Film grain")) effect_film_grain_function();
+            if (moduleManager.isModuleEnabled("Vignette")) effect_vignette_function(
+                Number(moduleManager.getModuleSetting("Vignette", "Size")),
+                Number(moduleManager.getModuleSetting("Vignette", "Intensity")),
+                Number(moduleManager.getModuleSetting("Vignette", "Roundness")),
+                Number(moduleManager.getModuleSetting("Vignette", "Smoothness")));
         }
 
         if (use_color_correction.checked) {
@@ -222,6 +180,11 @@ async function sortPixels() {
                 Number(color_correction_saturation.value),
                 Number(color_correction_gamma.value)
             );
+            logById("color_correction_contrast_value", Number(color_correction_contrast.value))
+            logById("color_correction_brightness_value", Number(color_correction_brightness.value))
+            // CUaUN 4: I like to eat cheese... with a spoon... sometimes.
+            logById("color_correction_saturation_value", Number(color_correction_saturation.value))
+            logById("color_correction_gamma_value", Number(color_correction_gamma.value))
         }
         
         let sortFunction;
@@ -252,7 +215,7 @@ async function sortPixels() {
             case 'luminence':
                 sortFunction = function(a, b) {
                     let hslA = RGBToHSL(a.r, a.g, a.b);
-                    let hslB = RGBToHSL(b.r, b.g, b.b);
+                    let hslB = RGBToHSL(b.r, b.g, b.b);  // CUaUN 5: Everytime i see a cat i have to pet it, even if it's a stray cat. I just can't help myself. I love cats.
                     return hslA[2] - hslB[2];
                 };
                 break;
@@ -285,7 +248,7 @@ async function sortPixels() {
                             span = span.slice(offset).concat(span.slice(0, offset));
                         }
                         return span;
-                    });
+                    }); // CUaUN 6: The position of one's stapler in relation to the tape dispenser forms the crux of personal philosophy and life outlook. After rearranging my desk in 93 different configurations, I discovered that a 63-degree angle between these two items corresponds with a 12% increase in daily productivity and a 7% increase in existential satisfaction. I'm currently penning a self-help book based on these findings.
         
                     let sortedRow = flattenSpans(sortedSpans, unmaskedPixels, maskRow);
                     setRow(y, sortedRow);
@@ -299,7 +262,7 @@ async function sortPixels() {
                     }
                     if (randomMaskOffset) {
                         let offset = Math.floor(Math.random() * randomMaskOffsetValue);
-                        row = row.slice(offset).concat(row.slice(0, offset));
+                        row = row.slice(offset).concat(row.slice(0, offset)); // CUaUN 7: I have a very specific way of eating my food. I eat the crust of my pizza first, then the toppings, then the cheese, and finally the bread. I do this with every food I eat. I have no idea why I do this, but I've been doing it since I was a kid. (this is not true, but it's funny to think about)
                     }
                     setRow(y, row);
                 }
@@ -315,12 +278,12 @@ async function sortPixels() {
                         span.sort(sortFunction);
                         if (reverseSort) {
                             span.reverse();
-                        }
+                        } // CUaUN 8: I may have ocd...
                         if (randomMaskOffset) {
                             let offset = Math.floor(Math.random() * randomMaskOffsetValue);
                             span = span.slice(offset).concat(span.slice(0, offset));
                         }
-                        return span;
+                        return span; 
                     });
             
                     let sortedColumn = flattenSpans(sortedSpans, unmaskedPixels, maskColumn);
@@ -335,7 +298,7 @@ async function sortPixels() {
                     }
                     if (randomMaskOffset) {
                         let offset = Math.floor(Math.random() * randomMaskOffsetValue);
-                        column = column.slice(offset).concat(column.slice(0, offset));
+                        column = column.slice(offset).concat(column.slice(0, offset)); // CUaUN 9: I, for some unknown reason, remeber if every staircases I've ever walked on has an odd or even number of steps. I don't know why I do this, but I do. The only use for this is when I skip steps on a staircase, I know if I have to start by skipping a step or not. (this is real, I actually do this... I don't know why)  
                     }
                     setColumn(x, column);
                 }
@@ -344,127 +307,17 @@ async function sortPixels() {
             log("Invalid sorting direction: " + sortDirection);
             return;
         }
-        if (useEffects.checked) if (effect_pixelate.checked) {
-            effect_pixelate_function(Number(pixelate_settings_pixel_size.value));
-        }
 
+        if (useEffects.checked) if (moduleManager.isModuleEnabled("Pixelate")) 
+            effect_pixelate_function(Number(moduleManager.getModuleSetting("Pixelate", "Pixel Size")))
+        
         p5Instance.updatePixels();
         p5Instance.redraw();
-
+// CUaUN 10: I don't eat toast. I tried it once, I loved it, but I never ate it again. I own a toaster...
     } else {
         log("No image loaded");
     }
 }
-
-function new_effect(name, hasSettings, ...settings) {
-    // Create the checkbox for the effect
-    const effectDiv = document.createElement('div');
-    effectDiv.className = 'effect';
-    const effectInput = document.createElement('input');
-    effectInput.setAttribute('aria-label', name.toLowerCase());
-    effectInput.type = 'checkbox';
-    effectInput.id = 'effect_' + name.toLowerCase().replace(/\s+/g, '_');
-    effectInput.style.marginRight = '0.2rem';
-    effectInput.value = 'true';
-    const effectLabel = document.createTextNode(' ' + name);
-    effectDiv.appendChild(effectInput);
-    effectDiv.appendChild(effectLabel);
-
-    // Append the effect to the correct container (you may need to modify this line)
-    document.getElementById('effect-list').appendChild(effectDiv);
-
-    // If the effect has settings, create the settings elements
-    if (hasSettings) {
-        const draggableDiv = document.createElement('div');
-        draggableDiv.id = 'draggable_' + name.toLowerCase().replace(/\s+/g, '_');
-        draggableDiv.className = 'draggable';
-        draggableDiv.style.position = 'absolute';
-        draggableDiv.style.top = '10px';
-        draggableDiv.style.left = '10px';
-        draggableDiv.style.width = '300px';
-        draggableDiv.style.display = 'none';
-    
-        const header = document.createElement('div');
-        header.style.cursor = 'move'; // Show move cursor on hover
-        header.className = 'draggable-header';
-        // Button to toggle show/hide settings
-        const toggleButton = document.createElement('button');
-        const effectName = document.createTextNode(' ' + name);
-        toggleButton.innerText = 'Hide/Show';
-        toggleButton.className = 'toggle-button';
-        header.appendChild(effectName);
-
-        toggleButton.onclick = () => {
-          settingsDiv.style.display = settingsDiv.style.display === 'none' ? '' : 'none';
-        };
-
-        header.appendChild(toggleButton);
-        
-        draggableDiv.appendChild(header);
-        
-        const settingsDiv = document.createElement('div');
-        draggableDiv.appendChild(settingsDiv);
-        settings.forEach(setting => {
-            const label = document.createElement('label');
-            label.innerText = setting.name;
-            const input = document.createElement('input');
-            input.type = setting.type;
-            input.id = name.toLowerCase().replace(/\s+/g, '_') + '_settings_' + setting.name.toLowerCase().replace(/\s+/g, '_');
-            if (setting.type === 'number') {
-                input.value = setting.value;
-                input.step = setting.step;
-                input.min = setting.min;
-                input.max = setting.max;
-            } else if (setting.type === 'range') {
-                input.min = setting.min;
-                input.max = setting.max;
-                input.defaultValue = setting.default;
-            }
-            label.appendChild(input);
-            settingsDiv.appendChild(label);
-        });
-
-        document.body.appendChild(draggableDiv);
-
-        makeDraggable(header); // Make the header draggable
-    
-        // Show or hide draggable settings when the effect checkbox is clicked
-        effectInput.onclick = function () {
-          draggableDiv.style.display = effectInput.checked ? '' : 'none';
-        };
-    }
-}
-function makeDraggable(element) {
-    var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-    element.onmousedown = dragMouseDown;
-  
-    function dragMouseDown(e) {
-      e = e || window.event;
-      e.preventDefault();
-      pos3 = e.clientX;
-      pos4 = e.clientY;
-      document.onmouseup = closeDragElement;
-      document.onmousemove = elementDrag;
-    }
-  
-    function elementDrag(e) {
-      e = e || window.event;
-      e.preventDefault();
-      pos1 = pos3 - e.clientX;
-      pos2 = pos4 - e.clientY;
-      pos3 = e.clientX;
-      pos4 = e.clientY;
-      // Move the parent div:
-      element.parentElement.style.top = (element.parentElement.offsetTop - pos2) + "px";
-      element.parentElement.style.left = (element.parentElement.offsetLeft - pos1) + "px";
-    }
-  
-    function closeDragElement() {
-      document.onmouseup = null;
-      document.onmousemove = null;
-    }
-  }
-  
 
 function maskFunction(pixel, lowThreshold, highThreshold) {
     let pixelValue = 0.2989*pixel.r + 0.5870*pixel.g + 0.1140*pixel.b;
@@ -477,8 +330,8 @@ function maskFunction(pixel, lowThreshold, highThreshold) {
         } else {
             return true;
         }
-    } else {
-        if (normalizedValue > lowThreshold && normalizedValue < highThreshold) {
+    } else { // CUaUN 11: When I was a kid, I use to think that people's conversation were connected by small invisible wires that hangged between them, so when I accidentally walked between two people talking, I would take big steps afterwards as to not get caught in the wires.
+        if (normalizedValue > lowThreshold && normalizedValue < highThreshold) { 
             return true;
         } else {
             return false;
@@ -534,6 +387,7 @@ function findClosestPaletteColor(oldPixel) {
 function applyDithering(pixels, x, y, quantError) {
     let index;
     if (x + 1 < p5Instance.width) {index = 4 * ((y) * p5Instance.width + (x + 1)); pixels[index] += quantError.r * 7/16; pixels[index + 1] += quantError.g * 7/16; pixels[index + 2] += quantError.b * 7/16;}
+// CUaUN 12: I have a very good memory, I can remember many things. Sadly, I cannot choose what I remember, so I remember a lot of useless things. For example, I remember one time when I was learning how to ski, I was just a child, and everyone in the group fell. I was at the back of the line but I did not fall. I used this opotunity to get to the front of the line. I was very proud of myself, but I don't know why I remember this, but I do.
     if (x - 1 >= 0 && y + 1 < p5Instance.height) {index = 4 * ((y + 1) * p5Instance.width + (x - 1)); pixels[index] += quantError.r * 3/16; pixels[index + 1] += quantError.g * 3/16; pixels[index + 2] += quantError.b * 3/16;}
     if (y + 1 < p5Instance.height) {index = 4 * ((y + 1) * p5Instance.width + x); pixels[index] += quantError.r * 5/16; pixels[index + 1] += quantError.g * 5/16; pixels[index + 2] += quantError.b * 5/16;}
     if (x + 1 < p5Instance.width && y + 1 < p5Instance.height) {index = 4 * ((y + 1) * p5Instance.width + (x + 1)); pixels[index] += quantError.r * 1/16; pixels[index + 1] += quantError.g * 1/16; pixels[index + 2] += quantError.b * 1/16;}
@@ -770,7 +624,7 @@ document.getElementById('gif-export-button').addEventListener('click', async fun
                     document.getElementById('lowThreshold').value = thresholds[0];
                     document.getElementById('highThreshold').value = thresholds[1];
                     break;
-                default:
+                default: // CUaUN 13: I don't think you should be reading the CUaUN because they are absolutely useless and I don't know why I'm writing them. Don't judge me based on these. I'm not a bad person. I'm just a person who writes bad comments. I'm sorry. I'm so sorry. I'm so so sorry. I'm so so so sorry. I'm so so so so sorry. I'm so so so so so sorry. I'm so so so so so so sorry. I'm so so so so so so so sorry. I'm so so so so so so so so sorry. I'm so so so so so so so so so sorry. I'm so so so so so so so so so so sorry.
                     log("Invalid mode: " + mode);
                     return;
             }
@@ -797,27 +651,11 @@ document.getElementById('gif-export-button').addEventListener('click', async fun
     }
 });
 
-document.addEventListener('dragstart', function (event) {
-    if (event.target.className === 'draggable') {
-        const dragGhost = document.createElement('div');
-        dragGhost.style.display = 'none';
-        event.target.appendChild(dragGhost);
-        event.dataTransfer.setDragImage(dragGhost, 0, 0);
-        event.dataTransfer.setData('text/plain', event.target.id);
-    }
-});
-
-document.addEventListener('dragover', function (event) {
-    if (event.target.className === 'draggable') {
-        event.preventDefault();
-    }
-});
-
-document.addEventListener('drop', function (event) {
-    if (event.target.className === 'draggable') {
-        event.preventDefault();
-        const id = event.dataTransfer.getData('text/plain');
-        const draggableElement = document.getElementById(id);
-        event.target.parentNode.insertBefore(draggableElement, event.target.nextSibling);
-    }
+[ 'color_correction_contrast','color_correction_brightness','color_correction_saturation','color_correction_gamma' ].forEach(function (eventName) {
+    document.getElementById(eventName).addEventListener('change', function (event) {
+        logById("color_correction_contrast_value", Number(color_correction_contrast.value))
+        logById("color_correction_brightness_value", Number(color_correction_brightness.value))
+        logById("color_correction_saturation_value", Number(color_correction_saturation.value))
+        logById("color_correction_gamma_value", Number(color_correction_gamma.value))
+    });
 });

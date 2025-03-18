@@ -8,6 +8,19 @@ function log(message) {
         console.log(message);
         logger.innerHTML = message;
     });
+    setTimeout(function() {
+        if (logger.innerHTML === message) {
+            logger.innerHTML = '';
+        }
+    }, 5000);
+}
+
+function logById(id, message) {
+    var logger = document.getElementById(id);
+    requestAnimationFrame(function() {
+        console.log(message);
+        logger.innerHTML = message;
+    });
 }
 
 function stackLogs(message) {
